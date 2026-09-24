@@ -431,12 +431,17 @@ document.getElementById('load-playlist-btn').addEventListener('click', async () 
   errEl.classList.add('hidden');
   const match = url.match(/playlist\/([a-zA-Z0-9]+)/);
   if(!match){ errEl.textContent='Pega un link válido de playlist de Spotify.'; errEl.classList.remove('hidden'); return; }
-  
+
   const playlistId = match[1];
   validationMode = document.getElementById('validation-mode').value;
   useTimer = document.getElementById('timer-mode').value === 'with-timer';
   numPlayers = parseInt(document.getElementById('num-players').value, 10);
   const requestedSongs = parseInt(document.getElementById('num-songs').value, 10) || 12;
+
+  const btn = document.getElementById('load-playlist-btn');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Cargando playlist...';
 
   try{
     const fetched = await fetchAllTracks(playlistId);
@@ -452,6 +457,9 @@ document.getElementById('load-playlist-btn').addEventListener('click', async () 
   }catch(e){
     errEl.textContent = 'Error cargando playlist: ' + e.message;
     errEl.classList.remove('hidden');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = originalText;
   }
 });
 

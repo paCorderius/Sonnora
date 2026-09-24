@@ -457,21 +457,19 @@ document.getElementById('load-playlist-btn').addEventListener('click', async () 
 
 async function fetchAllTracks(playlistId){
   let items = [];
-  let nextUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`;
+  let nextUrl = `https://api.spotify.com/v1/playlists/${playlistId}/items?limit=100`;
   while(nextUrl){
     const res = await fetch(nextUrl, { headers:{ Authorization:'Bearer '+accessToken }});
     if(res.status === 401){ throw new Error('Token expirado, vuelve a conectar (recarga la página).'); }
     const data = await res.json();
     if(data.error) throw new Error(data.error.message);
-    items = items.concat(data.items.filter(it => it.track && it.track.uri && it.track.type==='track'));
+    items = items.concat(data.items.filter(it => (it.item||it.track) && (it.item||it.track).uri && (it.item||it.track).type==='track'));
     nextUrl = data.next;
   }
-  return items.map(it => ({
-    uri: it.track.uri,
-    name: it.track.name,
-    artists: it.track.artists.map(a=>a.name),
-    duration_ms: it.track.duration_ms
-  }));
+  return items.map(it => {
+  const t = it.item || it.track;
+  return { uri: t.uri, name: t.name, artists: t.artists.map(a=>a.name), duration_ms: t.duration_ms };
+  });
 }
 
 function shuffle(arr){

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sonnora 🎵</title>
 <style>
   :root {
@@ -16,16 +16,19 @@
     --player-accent: #1db954;
   }
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    margin: 0; min-height: 100vh;
+    margin: 0; min-height: 100vh; min-height: 100dvh;
     background: radial-gradient(circle at 50% 0%, #1a1a24, var(--bg));
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: var(--text);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding: 14px;
+    padding-top: max(14px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(14px, env(safe-area-inset-bottom, 0px));
   }
   .card {
-    background: var(--card); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px;
+    background: var(--card); border-radius: 16px; padding: 20px; width: 100%; max-width: 520px;
     box-shadow: 0 20px 60px rgba(0,0,0,.5);
     border: 2px solid var(--green);
     transition: border-color 0.3s ease;
@@ -33,17 +36,18 @@
   
   /* TOP BAR & TOKEN TIMER */
   .top-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    width: 100%; max-width: 520px; margin-bottom: 12px; font-size: 13px; color: var(--muted);
+    display: flex; flex-direction: column; gap: 8px;
+    width: 100%; max-width: 520px; margin-bottom: 12px; font-size: 12px; color: var(--muted);
   }
   .token-badge {
-    background: #1f1f2b; padding: 6px 12px; border-radius: 20px; border: 1px solid #2e2e3c;
-    font-weight: 600; display: flex; align-items: center; gap: 6px;
+    background: #1f1f2b; padding: 8px 12px; border-radius: 12px; border: 1px solid #2e2e3c;
+    font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;
+    flex-wrap: wrap; text-align: center;
   }
   .btn-secondary-sm {
     background: #1f1f2b; color: var(--text); border: 1px solid #2e2e3c;
-    padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer;
-    transition: background 0.2s ease;
+    padding: 10px 12px; border-radius: 12px; font-size: 12px; cursor: pointer;
+    transition: background 0.2s ease; width: 100%; min-height: 40px;
   }
   .btn-secondary-sm:hover { background: #2a2a3a; }
 
@@ -54,7 +58,7 @@
   
   input[type=text], input[type=number], select {
     width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #2a2a36;
-    background: #0f0f15; color: var(--text); font-size: 14px; margin-bottom: 14px;
+    background: #0f0f15; color: var(--text); font-size: 16px; margin-bottom: 14px;
   }
   input[type=text]:focus, input[type=number]:focus, select:focus {
     outline: 2px solid var(--green); border-color: var(--green);
@@ -63,15 +67,19 @@
 
   button {
     cursor: pointer; border: none; border-radius: 999px; font-weight: 600; font-size: 14px;
-    padding: 12px 20px; transition: transform .1s ease, background .15s ease, border-color .15s ease;
+    padding: 12px 16px; min-height: 44px; transition: transform .1s ease, background .15s ease, border-color .15s ease;
   }
   button:active { transform: scale(.97); }
   .btn-primary { background: var(--green); color: #000; width: 100%; font-weight: 700; }
   .btn-primary:hover { opacity: 0.9; }
   .btn-primary:disabled { background: #2a2a36; color: #666; cursor: not-allowed; }
 
-  .row { display: flex; gap: 10px; margin: 14px 0; }
-  .btn-tier { flex: 1; background: #1f1f2b; color: var(--text); border: 1px solid #2e2e3c; }
+  .row { display: flex; gap: 8px; margin: 14px 0; }
+  .btn-tier {
+    flex: 1; background: #1f1f2b; color: var(--text); border: 1px solid #2e2e3c;
+    padding: 10px 6px; font-size: 12px; line-height: 1.3;
+  }
+  .btn-tier small { font-size: 10px; }
   .btn-tier:hover:not(:disabled) { background: #272733; }
   .btn-tier:disabled { opacity: .35; cursor: not-allowed; }
   .btn-tier.playing { background: var(--green); color: #000; font-weight: 700; }
@@ -96,20 +104,23 @@
 
   /* MULTIPLAYER SCOREBOARD */
   .scoreboard {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 8px; margin-bottom: 16px; background: #0f0f15; padding: 10px; border-radius: 12px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 6px; margin-bottom: 16px; background: #0f0f15; padding: 8px; border-radius: 12px;
   }
   .player-card {
-    background: #181822; padding: 8px; border-radius: 8px; text-align: center;
-    border: 2px solid transparent; font-size: 13px;
+    background: #181822; padding: 6px 4px; border-radius: 8px; text-align: center;
+    border: 2px solid transparent; font-size: 12px; overflow: hidden;
   }
   .player-card.active-turn {
     border-color: var(--green); background: #20202e; font-weight: bold;
     box-shadow: 0 0 10px rgba(255,255,255,0.1);
   }
-  .player-card .p-name { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+  .player-card .p-name {
+    font-size: 11px; color: var(--muted); margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
   .player-card.active-turn .p-name { color: var(--text); }
-  .player-card .p-score { font-size: 15px; font-weight: bold; }
+  .player-card .p-score { font-size: 14px; font-weight: bold; }
 
   .turn-banner {
     text-align: center; font-size: 15px; font-weight: 700;
@@ -133,6 +144,26 @@
   a { color: var(--green); }
   .footer-note { font-size: 11px; color: #5c5c66; margin-top: 18px; line-height: 1.5; }
   #track-hint { font-size: 13px; color: var(--muted); margin-bottom: 4px; text-align: center; }
+
+  /* MOBILE MUY CHICO (≤360px): afinar tamaños */
+  @media (max-width: 360px) {
+    .timer-large { font-size: 30px; }
+    h1 { font-size: 20px; }
+    .btn-tier { font-size: 11px; padding: 8px 4px; }
+  }
+
+  /* DESKTOP / TABLET: recuperar espacio más amplio */
+  @media (min-width: 600px) {
+    body { padding: 24px; justify-content: center; }
+    .card { padding: 32px; border-radius: 20px; }
+    .top-bar { flex-direction: row; justify-content: space-between; align-items: center; font-size: 13px; }
+    .token-badge { padding: 6px 12px; border-radius: 20px; }
+    .btn-secondary-sm { width: auto; padding: 6px 12px; border-radius: 20px; }
+    .row { gap: 10px; }
+    .btn-tier { padding: 12px 20px; font-size: 14px; }
+    .btn-tier small { font-size: 12px; }
+    button { padding: 12px 20px; }
+  }
 </style>
 </head>
 <body>
@@ -431,17 +462,12 @@ document.getElementById('load-playlist-btn').addEventListener('click', async () 
   errEl.classList.add('hidden');
   const match = url.match(/playlist\/([a-zA-Z0-9]+)/);
   if(!match){ errEl.textContent='Pega un link válido de playlist de Spotify.'; errEl.classList.remove('hidden'); return; }
-
+  
   const playlistId = match[1];
   validationMode = document.getElementById('validation-mode').value;
   useTimer = document.getElementById('timer-mode').value === 'with-timer';
   numPlayers = parseInt(document.getElementById('num-players').value, 10);
   const requestedSongs = parseInt(document.getElementById('num-songs').value, 10) || 12;
-
-  const btn = document.getElementById('load-playlist-btn');
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Cargando playlist...';
 
   try{
     const fetched = await fetchAllTracks(playlistId);
@@ -457,26 +483,40 @@ document.getElementById('load-playlist-btn').addEventListener('click', async () 
   }catch(e){
     errEl.textContent = 'Error cargando playlist: ' + e.message;
     errEl.classList.remove('hidden');
-  }finally{
-    btn.disabled = false;
-    btn.textContent = originalText;
   }
 });
 
 async function fetchAllTracks(playlistId){
+  // Desde la migración de la API de Spotify (feb/mar 2026), /tracks fue reemplazado por /items,
+  // y el contenido solo se devuelve para playlists que el usuario posee o donde es colaborador.
   let items = [];
   let nextUrl = `https://api.spotify.com/v1/playlists/${playlistId}/items?limit=100`;
   while(nextUrl){
     const res = await fetch(nextUrl, { headers:{ Authorization:'Bearer '+accessToken }});
     if(res.status === 401){ throw new Error('Token expirado, vuelve a conectar (recarga la página).'); }
+    if(res.status === 403){
+      throw new Error('Spotify bloqueó el acceso (403). Desde 2026 solo puedes cargar playlists que TÚ seas dueño o colaborador — guarda una copia en tu cuenta o agrégate como colaborador e inténtalo de nuevo.');
+    }
     const data = await res.json();
     if(data.error) throw new Error(data.error.message);
-    items = items.concat(data.items.filter(it => (it.item||it.track) && (it.item||it.track).uri && (it.item||it.track).type==='track'));
+    if(!data.items){
+      throw new Error('Esa playlist no es tuya ni colaborativa, así que Spotify no entrega sus canciones. Guarda una copia en tu biblioteca o pide que te agreguen como colaborador.');
+    }
+    // "item" es el nombre nuevo del campo (antes "track"); se soportan ambos por compatibilidad.
+    items = items.concat(data.items.filter(it => {
+      const t = it.item || it.track;
+      return t && t.uri && t.type === 'track';
+    }));
     nextUrl = data.next;
   }
   return items.map(it => {
-  const t = it.item || it.track;
-  return { uri: t.uri, name: t.name, artists: t.artists.map(a=>a.name), duration_ms: t.duration_ms };
+    const t = it.item || it.track;
+    return {
+      uri: t.uri,
+      name: t.name,
+      artists: t.artists.map(a=>a.name),
+      duration_ms: t.duration_ms
+    };
   });
 }
 

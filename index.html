@@ -13,7 +13,6 @@
     --text: #f2f2f2;
     --muted: #9a9aa5;
     --danger: #e5484d;
-    --player-accent: #1db954;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -22,7 +21,7 @@
     background: radial-gradient(circle at 50% 0%, #1a1a24, var(--bg));
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: var(--text);
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 14px;
     padding-top: max(14px, env(safe-area-inset-top, 0px));
     padding-bottom: max(14px, env(safe-area-inset-bottom, 0px));
@@ -33,7 +32,7 @@
     border: 2px solid var(--green);
     transition: border-color 0.3s ease;
   }
-  
+
   /* TOP BAR & TOKEN TIMER */
   .top-bar {
     display: flex; flex-direction: column; gap: 8px;
@@ -55,7 +54,7 @@
   h2 { font-size: 18px; margin: 0 0 16px; text-align: center; }
   p.sub { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
   label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 6px; font-weight: 500; }
-  
+
   input[type=text], input[type=number], select {
     width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #2a2a36;
     background: #0f0f15; color: var(--text); font-size: 16px; margin-bottom: 14px;
@@ -73,6 +72,22 @@
   .btn-primary { background: var(--green); color: #000; width: 100%; font-weight: 700; }
   .btn-primary:hover { opacity: 0.9; }
   .btn-primary:disabled { background: #2a2a36; color: #666; cursor: not-allowed; }
+  .btn-ghost { background: #1f1f2b; color: var(--text); border: 1px solid #2e2e3c; width: 100%; }
+  .btn-ghost:hover { background: #272733; }
+
+  .color-swatches { display:flex; gap:10px; margin-bottom:14px; }
+  .color-swatch {
+    width:36px; height:36px; border-radius:50%; cursor:pointer;
+    border:3px solid transparent; transition:transform .1s ease, border-color .15s ease;
+  }
+  .color-swatch:hover:not(.taken) { transform:scale(1.08); }
+  .color-swatch.selected { border-color:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.3); }
+  .color-swatch.taken { opacity:.2; cursor:not-allowed; }
+  .color-hint { font-size:11px; color:var(--muted); margin:-10px 0 14px; }
+
+  .role-choice { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+  .role-choice button { text-align:left; padding:16px; }
+  .role-choice small { display:block; font-weight:400; color:var(--muted); margin-top:4px; }
 
   .row { display: flex; gap: 8px; margin: 14px 0; }
   .btn-tier {
@@ -83,9 +98,9 @@
   .btn-tier:hover:not(:disabled) { background: #272733; }
   .btn-tier:disabled { opacity: .35; cursor: not-allowed; }
   .btn-tier.playing { background: var(--green); color: #000; font-weight: 700; }
-  
+
   .hidden { display: none !important; }
-  
+
   /* TIMER DISPLAY (PROMINENT) */
   .timer-container { text-align: center; margin: 12px 0 18px; }
   .timer-large {
@@ -102,6 +117,13 @@
     to { transform: scale(1.12); }
   }
 
+  /* STEAL WINDOW BANNER */
+  .steal-banner {
+    text-align:center; background:#2a1a10; border:1px solid #ff8a00; color:#ffb347;
+    border-radius:12px; padding:10px; margin-bottom:14px; font-size:13px; font-weight:700;
+  }
+  .steal-banner .steal-timer { font-size:20px; display:block; margin-top:2px; }
+
   /* MULTIPLAYER SCOREBOARD */
   .scoreboard {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
@@ -115,6 +137,7 @@
     border-color: var(--green); background: #20202e; font-weight: bold;
     box-shadow: 0 0 10px rgba(255,255,255,0.1);
   }
+  .player-card.me { outline: 1px dashed var(--muted); }
   .player-card .p-name {
     font-size: 11px; color: var(--muted); margin-bottom: 2px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -128,12 +151,20 @@
     background: #1a1a26; color: var(--green); border: 1px solid var(--green);
   }
 
-  /* COLOR BADGES FOR PLAYER SELECTION */
-  .p-input-group { margin-bottom: 12px; background: #0f0f15; padding: 12px; border-radius: 12px; }
-  .p-badge {
-    display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 8px;
-    vertical-align: middle; transition: background 0.2s ease;
+  .room-code-box {
+    text-align:center; background:#0f0f15; border:1px dashed var(--green); border-radius:12px;
+    padding:16px; margin-bottom:16px;
   }
+  .room-code-box .code { font-size:32px; font-weight:900; letter-spacing:6px; color:var(--green); }
+  .room-code-box small { display:block; color:var(--muted); margin-top:6px; }
+
+  .lobby-list { margin: 10px 0 18px; display:flex; flex-direction:column; gap:8px; }
+  .lobby-row {
+    display:flex; align-items:center; gap:10px; background:#181822; padding:10px 12px; border-radius:10px;
+  }
+  .lobby-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+  .lobby-name { flex:1; font-weight:600; }
+  .waiting-note { text-align:center; color:var(--muted); font-size:13px; margin-top:10px; }
 
   #feedback { min-height: 22px; font-size: 15px; margin: 10px 0; text-align: center; font-weight: 700; }
   .ok { color: var(--green); }
@@ -145,16 +176,15 @@
   .footer-note { font-size: 11px; color: #5c5c66; margin-top: 18px; line-height: 1.5; }
   #track-hint { font-size: 13px; color: var(--muted); margin-bottom: 4px; text-align: center; }
 
-  /* MOBILE MUY CHICO (≤360px): afinar tamaños */
   @media (max-width: 360px) {
     .timer-large { font-size: 30px; }
     h1 { font-size: 20px; }
     .btn-tier { font-size: 11px; padding: 8px 4px; }
+    .room-code-box .code { font-size: 26px; letter-spacing: 4px; }
   }
 
-  /* DESKTOP / TABLET: recuperar espacio más amplio */
   @media (min-width: 600px) {
-    body { padding: 24px; justify-content: center; }
+    body { padding: 24px; }
     .card { padding: 32px; border-radius: 20px; }
     .top-bar { flex-direction: row; justify-content: space-between; align-items: center; font-size: 13px; }
     .token-badge { padding: 6px 12px; border-radius: 20px; }
@@ -168,7 +198,7 @@
 </head>
 <body>
 
-<div class="top-bar">
+<div class="top-bar hidden" id="top-bar">
   <div class="token-badge" id="token-timer-box">
     🔑 Token expira en: <span id="token-time-left" style="color:var(--text);">--:--</span>
   </div>
@@ -179,13 +209,42 @@
   <h1>🎧 Sonnora</h1>
   <p class="sub">Escucha un fragmento y adivina el tema. Gana estrellas según el tiempo utilizado.</p>
 
-  <!-- SETUP SCREEN -->
-  <div id="setup-screen">
+  <!-- ROLE SCREEN -->
+  <div id="role-screen">
+    <p class="sub" style="margin-bottom:6px;">¿Cómo vas a jugar?</p>
+    <div class="role-choice">
+      <button class="btn-ghost" id="role-host-btn">
+        🎤 Soy el anfitrión<small>Reproduzco la música desde mi cuenta Premium. Los demás se unen con un código.</small>
+      </button>
+      <button class="btn-ghost" id="role-guest-btn">
+        🔗 Me uno con un código<small>No necesito cuenta Spotify — solo escucho, adivino y sumo estrellas.</small>
+      </button>
+    </div>
+    <div class="err hidden" id="role-err"></div>
+  </div>
+
+  <!-- JOIN SCREEN (invitado) -->
+  <div id="join-screen" class="hidden">
+    <label>Código de sala</label>
+    <input type="text" id="join-code" placeholder="Ej. AB3XQ" style="text-transform:uppercase;" maxlength="6">
+    <label>Tu color</label>
+    <div class="color-swatches" id="guest-color-swatches"></div>
+    <div class="color-hint" id="guest-color-hint">Escribe el código para ver los colores disponibles.</div>
+    <label>Tu nickname</label>
+    <input type="text" id="join-nick" placeholder="Tu nombre" maxlength="20">
+    <button class="btn-primary" id="join-room-btn">Unirme a la sala</button>
+    <button class="btn-ghost" id="join-back-btn" style="margin-top:8px;">← Volver</button>
+    <div class="err hidden" id="join-err"></div>
+  </div>
+
+  <!-- SETUP SCREEN (anfitrión) -->
+  <div id="setup-screen" class="hidden">
     <!-- LOGIN BLOCK -->
     <div id="login-block">
       <label>Spotify Client ID</label>
       <input type="text" id="client-id" placeholder="Tu Client ID de developer.spotify.com">
       <button class="btn-primary" id="login-btn">Conectar con Spotify</button>
+      <button class="btn-ghost" id="host-back-btn" style="margin-top:8px;">← Volver</button>
       <p class="footer-note">
         Antes de continuar: en tu app de <a href="https://developer.spotify.com/dashboard" target="_blank">developer.spotify.com/dashboard</a>,
         agrega esta Redirect URI exacta en Settings → Redirect URIs:<br>
@@ -196,9 +255,15 @@
 
     <!-- PLAYLIST & CONFIG BLOCK -->
     <div id="playlist-block" class="hidden">
+      <label>Tu nickname (Jugador 1)</label>
+      <input type="text" id="host-nick" placeholder="Tu nombre" maxlength="20" value="Jugador 1">
+
+      <label>Tu color</label>
+      <div class="color-swatches" id="host-color-swatches"></div>
+
       <label>Link de la playlist de Spotify</label>
       <input type="text" id="playlist-url" placeholder="https://open.spotify.com/playlist/....">
-      
+
       <label>¿Cómo se valida tu respuesta?</label>
       <select id="validation-mode">
         <option value="title">Solo nombre de la canción</option>
@@ -207,44 +272,42 @@
 
       <label>Modo de juego (Temporizador de ronda)</label>
       <select id="timer-mode">
-        <option value="with-timer">Con temporizador (45s por canción)</option>
-        <option value="no-timer">Sin temporizador (Sin límite de tiempo)</option>
-      </select>
-
-      <label>Número de jugadores (1 a 4)</label>
-      <select id="num-players">
-        <option value="1">1 Jugador</option>
-        <option value="2">2 Jugadores</option>
-        <option value="3">3 Jugadores</option>
-        <option value="4">4 Jugadores</option>
+        <option value="with-timer">Con temporizador (45s + 10s de robo)</option>
+        <option value="no-timer">Sin temporizador (sin límite, sin robo)</option>
       </select>
 
       <label>Número de canciones a adivinar</label>
-      <input type="number" id="num-songs" value="12" min="1" max="100">
-      <div class="recommend-hint" id="songs-hint">Recomendación: máximo 60 canciones. Se sugiere un múltiplo del número de jugadores.</div>
+      <input type="number" id="num-songs" value="12" min="1" max="60">
+      <div class="recommend-hint">Recomendación: máximo 60. Idealmente múltiplo del número de jugadores que se unan (lo sabrás en la sala).</div>
 
-      <button class="btn-primary" id="load-playlist-btn">Cargar playlist y continuar</button>
+      <button class="btn-primary" id="load-playlist-btn">Cargar playlist y crear sala</button>
       <div class="err hidden" id="playlist-err"></div>
     </div>
   </div>
 
-  <!-- NICKNAMES & COLOR SELECTION SCREEN -->
-  <div id="players-screen" class="hidden">
-    <h2>Configuración de Jugadores</h2>
-    <div id="nicknames-container"></div>
-    <button class="btn-primary" id="start-game-btn">¡Empezar a Jugar!</button>
+  <!-- LOBBY SCREEN -->
+  <div id="lobby-screen" class="hidden">
+    <div class="room-code-box">
+      <div class="code" id="room-code-display">------</div>
+      <small>Comparte este código con tus amigos para que se unan</small>
+    </div>
+    <div class="lobby-list" id="lobby-list"></div>
+    <button class="btn-primary hidden" id="start-room-btn">▶ Iniciar juego</button>
+    <div class="waiting-note hidden" id="lobby-waiting-note">Esperando a que el anfitrión inicie la partida…</div>
+    <div class="err hidden" id="lobby-err"></div>
   </div>
 
   <!-- GAME SCREEN -->
   <div id="game-screen" class="hidden">
     <div id="turn-banner" class="turn-banner">Turno de: <span id="current-player-name">Jugador 1</span></div>
+    <div id="steal-banner" class="steal-banner hidden">
+      🎯 ¡Ventana de robo! Los demás pueden adivinar por +1⭐
+      <span class="steal-timer" id="steal-timer-label">10s</span>
+    </div>
 
-    <!-- TABLERO DE PUNTUACIÓN -->
     <div class="scoreboard" id="scoreboard"></div>
-
     <div class="progress" id="progress-label"></div>
 
-    <!-- TEMPORIZADOR DE RONDA -->
     <div class="timer-container" id="timer-container">
       <div class="timer-large" id="timer-label">⏱ 45s</div>
     </div>
@@ -258,7 +321,7 @@
       <button class="btn-tier" data-secs="10" id="tier-10">▶ 10s <br><small>1⭐ · una vez</small></button>
     </div>
 
-    <label>Tu respuesta (canción o artista)</label>
+    <label id="guess-label">Tu respuesta (canción o artista)</label>
     <input type="text" id="guess-input" placeholder="Escribe tu respuesta y presiona Enter" disabled>
     <button class="btn-primary" id="guess-btn" disabled>Adivinar</button>
 
@@ -266,6 +329,8 @@
     <div id="answer-reveal"></div>
 
     <button class="btn-primary hidden" id="next-btn" style="background:#2a2a36; color:var(--text);">Siguiente canción →</button>
+    <button class="btn-ghost hidden" id="force-next-btn">⏭ Forzar avanzar (anfitrión)</button>
+    <div class="waiting-note hidden" id="game-waiting-note">Esperando a que el anfitrión continúe…</div>
   </div>
 
   <!-- END SCREEN -->
@@ -276,21 +341,39 @@
   </div>
 </div>
 
+<!-- Firebase (Realtime Database) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
 <script>
-/* ============ CONFIG & PALETTE OPTIONS ============ */
+/* ==========================================================================
+   CONFIGURA TU PROYECTO DE FIREBASE AQUÍ (ver README para los pasos).
+   Los valores de un proyecto Firebase no son secretos, es seguro dejarlos
+   en el HTML — la protección real la dan las reglas de la Realtime Database.
+   ========================================================================== */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDHrKEDMAm43La-6DkwiGbIJsYqTmWnJ5w",
+  authDomain: "sonnora-music.firebaseapp.com",
+  databaseURL: "https://sonnora-music-default-rtdb.firebaseio.com",
+  projectId: "sonnora-music",
+  storageBucket: "sonnora-music.firebasestorage.app",
+  messagingSenderId: "242650395321",
+  appId: "1:242650395321:web:3df12e54d19bac0aa86168"
+};
+
+const firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
+const db = firebase.database();
+
+/* ============ CONFIG GENERAL ============ */
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 const SCOPES = "streaming user-read-email user-read-private playlist-read-private playlist-read-collaborative";
 document.getElementById('redirect-uri-display').textContent = REDIRECT_URI;
 
-// Lista de colores seleccionables
-const COLOR_OPTIONS = [
-  { name: 'Azul', hex: '#3b82f6' },
-  { name: 'Rojo', hex: '#ef4444' },
-  { name: 'Verde', hex: '#10b981' },
-  { name: 'Amarillo', hex: '#eab308' },
-  { name: 'Rosa', hex: '#ec4899' },
-  { name: 'Morado', hex: '#8b5cf6' }
-];
+const PLAYER_COLORS = ['#3b82f6', '#ef4444', '#10b981', '#eab308']; // azul, rojo, verde, amarillo
+const MAX_ATTEMPTS = 3;
+const ROUND_SECONDS = 45;
+const STEAL_SECONDS = 10;
+const MAX_PLAYERS = 4;
 
 /* ============ PKCE HELPERS ============ */
 function randomString(len){
@@ -306,61 +389,119 @@ function base64UrlEncode(buffer){
   return btoa(String.fromCharCode(...new Uint8Array(buffer)))
     .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
+function normalize(str){
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9 ]/g,'').trim();
+}
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+}
+function genRoomCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sin caracteres ambiguos (0/O, 1/I)
+  let out=''; for(let i=0;i<5;i++) out+=chars[Math.floor(Math.random()*chars.length)];
+  return out;
+}
 
-/* ============ STATE ============ */
+/* ============ ESTADO LOCAL ============ */
 let accessToken = localStorage.getItem('sg_access_token') || null;
 let clientId = localStorage.getItem('sg_client_id') || '';
 let tokenTimestamp = localStorage.getItem('sg_token_timestamp') || null;
+let tokenTimerInterval = null;
 
 let player, deviceId;
-let tracks = [];
-let currentIndex = 0;
-let currentTrack = null;
-let currentTierPlaying = null;
-let playTimeout = null;
-let startPositionMs = 0;
+let isHost = false;
+let myPlayerId = null;
+let roomCode = null;
+let roomRef = null;
 
-let validationMode = 'title';
-let useTimer = true;
-let numPlayers = 1;
-let players = []; // [{ name: '', score: 0, color: '' }]
-let currentPlayerIndex = 0;
+let roomTracks = [];
+let roomPlayers = {};      // { playerId: {name,color,score,order} }
+let roomTurnOrder = [];    // [playerId, ...]
+let roomSettings = {};
+let roomState = {};        // fase, currentIndex, turnIndex, roundStartTs, stealStartTs, attemptsUsed, tenUsed, stealWinnerId, lastResult
 
-let attemptsUsed = 0;
-const MAX_ATTEMPTS = 3;
-let tenUsed = false;
-let roundResolved = false;
-let timerStarted = false;
-let timeLeft = 45;
-const ROUND_SECONDS = 45;
-let timerInterval = null;
-let tokenTimerInterval = null;
+let uiTimerInterval = null;
+let lastHandledPlaybackNonce = null;
+let localAttemptFeedbackShown = false;
+
+let hostChosenColor = PLAYER_COLORS[0];
+let guestChosenColor = null;
 
 document.getElementById('client-id').value = clientId;
 
-/* ============ TOKEN TIMER & RESET SESSION ============ */
-function startTokenTimer() {
-  if (tokenTimerInterval) clearInterval(tokenTimerInterval);
-  
-  function updateTokenDisplay() {
-    if (!tokenTimestamp) {
-      document.getElementById('token-time-left').textContent = "--:--";
+/* ============ SELECCIÓN DE COLOR ============ */
+function renderColorSwatches(containerId, takenColors, selected, onPick){
+  const el = document.getElementById(containerId);
+  el.innerHTML = PLAYER_COLORS.map(c => {
+    const taken = takenColors.includes(c) && c !== selected;
+    return `<div class="color-swatch ${c===selected?'selected':''} ${taken?'taken':''}" data-color="${c}" style="background:${c}"></div>`;
+  }).join('');
+  el.querySelectorAll('.color-swatch:not(.taken)').forEach(sw=>{
+    sw.addEventListener('click', () => onPick(sw.dataset.color));
+  });
+}
+function pickHostColor(color){
+  hostChosenColor = color;
+  renderColorSwatches('host-color-swatches', [], color, pickHostColor);
+}
+pickHostColor(PLAYER_COLORS[0]);
+
+function pickGuestColor(taken, color){
+  guestChosenColor = color;
+  renderColorSwatches('guest-color-swatches', taken, color, (c)=>pickGuestColor(taken, c));
+}
+function debounce(fn, ms){
+  let t; return (...args) => { clearTimeout(t); t = setTimeout(()=>fn(...args), ms); };
+}
+document.getElementById('join-code').addEventListener('input', debounce(async () => {
+  const code = document.getElementById('join-code').value.trim().toUpperCase();
+  const hint = document.getElementById('guest-color-hint');
+  if(code.length !== 5){
+    document.getElementById('guest-color-swatches').innerHTML = '';
+    guestChosenColor = null;
+    hint.textContent = 'Escribe el código para ver los colores disponibles.';
+    return;
+  }
+  try{
+    const snap = await db.ref('rooms/'+code+'/players').get();
+    const existing = snap.exists() ? snap.val() : {};
+    const taken = Object.values(existing).map(p=>p.color);
+    if(taken.length >= MAX_PLAYERS){
+      document.getElementById('guest-color-swatches').innerHTML = '';
+      guestChosenColor = null;
+      hint.textContent = 'Esa sala ya tiene 4 jugadores.';
       return;
     }
+    if(!guestChosenColor || taken.includes(guestChosenColor)){
+      guestChosenColor = PLAYER_COLORS.find(c => !taken.includes(c)) || null;
+    }
+    pickGuestColor(taken, guestChosenColor);
+    hint.textContent = `Colores disponibles para la sala ${code}.`;
+  }catch(e){
+    hint.textContent = 'No pude verificar esa sala todavía (revisa el código).';
+  }
+}, 400));
+
+/* ============ TOKEN TIMER & RESET ============ */
+function startTokenTimer() {
+  document.getElementById('top-bar').classList.remove('hidden');
+  if (tokenTimerInterval) clearInterval(tokenTimerInterval);
+  function updateTokenDisplay() {
+    if (!tokenTimestamp) { document.getElementById('token-time-left').textContent = "--:--"; return; }
     const elapsed = Math.floor((Date.now() - parseInt(tokenTimestamp, 10)) / 1000);
     const remaining = 3600 - elapsed;
-
-    if (remaining <= 0) {
-      document.getElementById('token-time-left').textContent = "EXPIRADO";
-      document.getElementById('token-time-left').style.color = "var(--danger)";
-    } else {
-      const mins = Math.floor(remaining / 60);
-      const secs = remaining % 60;
-      document.getElementById('token-time-left').textContent = `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
-      document.getElementById('token-time-left').style.color = "var(--text)";
+    const el = document.getElementById('token-time-left');
+    if (remaining <= 0) { el.textContent = "EXPIRADO"; el.style.color = "var(--danger)"; }
+    else {
+      const mins = Math.floor(remaining/60), secs = remaining%60;
+      el.textContent = `${mins}m ${secs<10?'0':''}${secs}s`;
+      el.style.color = "var(--text)";
     }
   }
-
   updateTokenDisplay();
   tokenTimerInterval = setInterval(updateTokenDisplay, 1000);
 }
@@ -373,26 +514,97 @@ document.getElementById('reset-session-btn').addEventListener('click', () => {
   }
 });
 
-/* ============ LOGIN FLOW ============ */
+/* ============ ROLE SCREEN ============ */
+function showScreen(id){
+  ['role-screen','join-screen','setup-screen','lobby-screen','game-screen','end-screen'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden', s!==id);
+  });
+}
+
+document.getElementById('role-host-btn').addEventListener('click', () => {
+  isHost = true;
+  showScreen('setup-screen');
+});
+document.getElementById('role-guest-btn').addEventListener('click', () => {
+  isHost = false;
+  showScreen('join-screen');
+});
+document.getElementById('join-back-btn').addEventListener('click', () => showScreen('role-screen'));
+document.getElementById('host-back-btn').addEventListener('click', () => showScreen('role-screen'));
+
+/* ============ JOIN ROOM (invitado) ============ */
+document.getElementById('join-room-btn').addEventListener('click', async () => {
+  const code = document.getElementById('join-code').value.trim().toUpperCase();
+  const nick = document.getElementById('join-nick').value.trim();
+  const errEl = document.getElementById('join-err');
+  errEl.classList.add('hidden');
+  if(!code || !nick){ errEl.textContent='Ingresa el código y tu nickname.'; errEl.classList.remove('hidden'); return; }
+  if(!guestChosenColor){ errEl.textContent='Elige un color disponible.'; errEl.classList.remove('hidden'); return; }
+
+  try{
+    const snap = await db.ref('rooms/'+code).get();
+    if(!snap.exists()){ errEl.textContent='No existe esa sala. Revisa el código.'; errEl.classList.remove('hidden'); return; }
+    const room = snap.val();
+    if(room.state && room.state.phase && room.state.phase !== 'lobby'){
+      errEl.textContent='Esa partida ya empezó. Pide al anfitrión que cree una sala nueva.'; errEl.classList.remove('hidden'); return;
+    }
+
+    myPlayerId = 'p_' + Math.random().toString(36).slice(2,10);
+    roomCode = code;
+    roomRef = db.ref('rooms/'+code);
+
+    // transacción atómica: valida cupo Y que el color siga libre en el mismo paso
+    const playersResult = await roomRef.child('players').transaction(current => {
+      current = current || {};
+      if(Object.keys(current).length >= MAX_PLAYERS) return; // aborta: sala llena
+      const taken = Object.values(current).map(p=>p.color);
+      if(taken.includes(guestChosenColor)) return; // aborta: alguien tomó ese color justo antes
+      current[myPlayerId] = { name: nick, color: guestChosenColor, score: 0 };
+      return current;
+    });
+
+    if(!playersResult.committed){
+      errEl.textContent = 'La sala se llenó o alguien tomó ese color justo antes. Elige otro color.';
+      errEl.classList.remove('hidden');
+      // refresca disponibilidad
+      const freshSnap = await roomRef.child('players').get();
+      const freshTaken = Object.values(freshSnap.val() || {}).map(p=>p.color);
+      guestChosenColor = PLAYER_COLORS.find(c => !freshTaken.includes(c)) || null;
+      pickGuestColor(freshTaken, guestChosenColor);
+      return;
+    }
+
+    // ya quedó como jugador válido: ahora se agrega al orden de turnos
+    await roomRef.child('state/turnOrder').transaction(order => {
+      order = order || [];
+      if(!order.includes(myPlayerId)) order.push(myPlayerId);
+      return order;
+    });
+
+    attachRoomListeners();
+    showScreen('lobby-screen');
+  }catch(e){
+    errEl.textContent = 'Error al unirse: ' + e.message;
+    errEl.classList.remove('hidden');
+  }
+});
+
+/* ============ LOGIN FLOW (anfitrión) ============ */
 document.getElementById('login-btn').addEventListener('click', async () => {
   clientId = document.getElementById('client-id').value.trim();
   const errEl = document.getElementById('setup-err');
   errEl.classList.add('hidden');
   if(!clientId){ errEl.textContent='Pega tu Client ID primero.'; errEl.classList.remove('hidden'); return; }
-  
   localStorage.setItem('sg_client_id', clientId);
+  localStorage.setItem('sg_is_host', '1');
 
   const verifier = randomString(64);
   localStorage.setItem('sg_verifier', verifier);
   const challenge = base64UrlEncode(await sha256(verifier));
 
   const params = new URLSearchParams({
-    client_id: clientId,
-    response_type: 'code',
-    redirect_uri: REDIRECT_URI,
-    scope: SCOPES,
-    code_challenge_method: 'S256',
-    code_challenge: challenge
+    client_id: clientId, response_type: 'code', redirect_uri: REDIRECT_URI,
+    scope: SCOPES, code_challenge_method: 'S256', code_challenge: challenge
   });
   window.location = 'https://accounts.spotify.com/authorize?' + params.toString();
 });
@@ -400,16 +612,11 @@ document.getElementById('login-btn').addEventListener('click', async () => {
 async function exchangeCodeForToken(code){
   const verifier = localStorage.getItem('sg_verifier');
   const body = new URLSearchParams({
-    client_id: clientId,
-    grant_type: 'authorization_code',
-    code,
-    redirect_uri: REDIRECT_URI,
-    code_verifier: verifier
+    client_id: clientId, grant_type: 'authorization_code', code,
+    redirect_uri: REDIRECT_URI, code_verifier: verifier
   });
   const res = await fetch('https://accounts.spotify.com/api/token', {
-    method:'POST',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body
+    method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body
   });
   const data = await res.json();
   if(data.access_token){
@@ -419,55 +626,49 @@ async function exchangeCodeForToken(code){
     localStorage.setItem('sg_token_timestamp', tokenTimestamp);
     if(data.refresh_token) localStorage.setItem('sg_refresh_token', data.refresh_token);
     history.replaceState({}, document.title, REDIRECT_URI);
+    isHost = true;
     startTokenTimer();
-    showPlaylistScreen();
+    showScreen('setup-screen');
+    document.getElementById('login-block').classList.add('hidden');
+    document.getElementById('playlist-block').classList.remove('hidden');
   } else {
     document.getElementById('setup-err').textContent = 'Error al obtener token: ' + (data.error_description||JSON.stringify(data));
     document.getElementById('setup-err').classList.remove('hidden');
+    showScreen('setup-screen');
   }
 }
 
-// Redirect URL handling
 (function initFromUrl(){
   const params = new URLSearchParams(window.location.search);
   if(params.get('code')){
     clientId = localStorage.getItem('sg_client_id') || clientId;
     exchangeCodeForToken(params.get('code'));
-  } else if (accessToken){
+  } else if (accessToken && localStorage.getItem('sg_is_host')){
+    isHost = true;
     startTokenTimer();
-    showPlaylistScreen();
+    showScreen('setup-screen');
+    document.getElementById('login-block').classList.add('hidden');
+    document.getElementById('playlist-block').classList.remove('hidden');
   }
 })();
 
-function showPlaylistScreen(){
-  document.getElementById('login-block').classList.add('hidden');
-  document.getElementById('playlist-block').classList.remove('hidden');
-  updateSongRecommendation();
-}
-
-/* ============ PLAYLIST OPTIONS & HINTS ============ */
-const numPlayersSelect = document.getElementById('num-players');
-numPlayersSelect.addEventListener('change', updateSongRecommendation);
-
-function updateSongRecommendation(){
-  const count = parseInt(numPlayersSelect.value, 10);
-  const hintEl = document.getElementById('songs-hint');
-  const mults = [count * 3, count * 5, count * 10, 60].filter(m => m <= 60);
-  hintEl.textContent = `Recomendación: máximo 60 canciones y múltiplo de ${count} (ej. ${mults.join(', ')}).`;
-}
-
+/* ============ CARGAR PLAYLIST Y CREAR SALA (anfitrión) ============ */
 document.getElementById('load-playlist-btn').addEventListener('click', async () => {
   const url = document.getElementById('playlist-url').value.trim();
+  const hostNick = document.getElementById('host-nick').value.trim() || 'Jugador 1';
   const errEl = document.getElementById('playlist-err');
   errEl.classList.add('hidden');
   const match = url.match(/playlist\/([a-zA-Z0-9]+)/);
   if(!match){ errEl.textContent='Pega un link válido de playlist de Spotify.'; errEl.classList.remove('hidden'); return; }
-  
+
   const playlistId = match[1];
-  validationMode = document.getElementById('validation-mode').value;
-  useTimer = document.getElementById('timer-mode').value === 'with-timer';
-  numPlayers = parseInt(document.getElementById('num-players').value, 10);
+  const validationMode = document.getElementById('validation-mode').value;
+  const playWithTimer = document.getElementById('timer-mode').value === 'with-timer';
   const requestedSongs = parseInt(document.getElementById('num-songs').value, 10) || 12;
+
+  const btn = document.getElementById('load-playlist-btn');
+  const originalText = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Cargando playlist...';
 
   try{
     const fetched = await fetchAllTracks(playlistId);
@@ -477,32 +678,42 @@ document.getElementById('load-playlist-btn').addEventListener('click', async () 
       return;
     }
     shuffle(fetched);
-    tracks = fetched.slice(0, Math.min(requestedSongs, fetched.length));
+    const selectedTracks = fetched.slice(0, Math.min(requestedSongs, fetched.length));
 
-    setupNicknamesScreen();
+    myPlayerId = 'p_' + Math.random().toString(36).slice(2,10);
+    roomCode = genRoomCode();
+    roomRef = db.ref('rooms/'+roomCode);
+    await roomRef.set({
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
+      settings: { validationMode, playWithTimer, maxAttempts: MAX_ATTEMPTS, stealSeconds: STEAL_SECONDS },
+      tracks: selectedTracks,
+      players: { [myPlayerId]: { name: hostNick, color: hostChosenColor, score:0 } },
+      state: { phase:'lobby', currentIndex:0, turnIndex:0, turnOrder:[myPlayerId] }
+    });
+
+    initSDK(); // conecta el Web Playback SDK; al quedar listo entra a la sala
   }catch(e){
     errEl.textContent = 'Error cargando playlist: ' + e.message;
     errEl.classList.remove('hidden');
+  }finally{
+    btn.disabled = false; btn.textContent = originalText;
   }
 });
 
 async function fetchAllTracks(playlistId){
-  // Desde la migración de la API de Spotify (feb/mar 2026), /tracks fue reemplazado por /items,
-  // y el contenido solo se devuelve para playlists que el usuario posee o donde es colaborador.
   let items = [];
   let nextUrl = `https://api.spotify.com/v1/playlists/${playlistId}/items?limit=100`;
   while(nextUrl){
     const res = await fetch(nextUrl, { headers:{ Authorization:'Bearer '+accessToken }});
     if(res.status === 401){ throw new Error('Token expirado, vuelve a conectar (recarga la página).'); }
     if(res.status === 403){
-      throw new Error('Spotify bloqueó el acceso (403). Desde 2026 solo puedes cargar playlists que TÚ seas dueño o colaborador — guarda una copia en tu cuenta o agrégate como colaborador e inténtalo de nuevo.');
+      throw new Error('Spotify bloqueó el acceso (403). Solo puedes cargar playlists que TÚ seas dueño o colaborador — guarda una copia en tu cuenta o agrégate como colaborador e inténtalo de nuevo.');
     }
     const data = await res.json();
     if(data.error) throw new Error(data.error.message);
     if(!data.items){
-      throw new Error('Esa playlist no es tuya ni colaborativa, así que Spotify no entrega sus canciones. Guarda una copia en tu biblioteca o pide que te agreguen como colaborador.');
+      throw new Error('Esa playlist no es tuya ni colaborativa, así que Spotify no entrega sus canciones.');
     }
-    // "item" es el nombre nuevo del campo (antes "track"); se soportan ambos por compatibilidad.
     items = items.concat(data.items.filter(it => {
       const t = it.item || it.track;
       return t && t.uri && t.type === 'track';
@@ -511,85 +722,13 @@ async function fetchAllTracks(playlistId){
   }
   return items.map(it => {
     const t = it.item || it.track;
-    return {
-      uri: t.uri,
-      name: t.name,
-      artists: t.artists.map(a=>a.name),
-      duration_ms: t.duration_ms
-    };
+    return { uri: t.uri, name: t.name, artists: t.artists.map(a=>a.name), duration_ms: t.duration_ms };
   });
 }
 
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]] = [arr[j],arr[i]];
-  }
-}
-
-/* ============ NICKNAMES & COLOR SELECTION SCREEN ============ */
-function setupNicknamesScreen() {
-  document.getElementById('setup-screen').classList.add('hidden');
-  document.getElementById('players-screen').classList.remove('hidden');
-  
-  const container = document.getElementById('nicknames-container');
-  container.innerHTML = '';
-
-  for (let i = 0; i < numPlayers; i++) {
-    const defaultColorIndex = i % COLOR_OPTIONS.length;
-    const div = document.createElement('div');
-    div.className = 'p-input-group';
-    
-    let optionsHtml = '';
-    COLOR_OPTIONS.forEach((c, idx) => {
-      const selected = idx === defaultColorIndex ? 'selected' : '';
-      optionsHtml += `<option value="${c.hex}" ${selected}>🎨 ${c.name}</option>`;
-    });
-
-    div.innerHTML = `
-      <div style="margin-bottom:6px;">
-        <label style="margin:0; display:flex; align-items:center;">
-          <span class="p-badge" id="badge-prev-${i}" style="background:${COLOR_OPTIONS[defaultColorIndex].hex};"></span>
-          Jugador ${i+1}
-        </label>
-      </div>
-      <div style="display:flex; gap:10px;">
-        <input type="text" id="player-nick-${i}" value="Jugador ${i+1}" placeholder="Nickname" style="flex:2; margin-bottom:0;">
-        <select id="player-color-${i}" style="flex:1; margin-bottom:0;" onchange="updateBadgePreview(${i})">
-          ${optionsHtml}
-        </select>
-      </div>
-    `;
-    container.appendChild(div);
-  }
-}
-
-window.updateBadgePreview = function(i) {
-  const select = document.getElementById(`player-color-${i}`);
-  const badge = document.getElementById(`badge-prev-${i}`);
-  if (select && badge) {
-    badge.style.background = select.value;
-  }
-};
-
-document.getElementById('start-game-btn').addEventListener('click', () => {
-  players = [];
-  for (let i = 0; i < numPlayers; i++) {
-    const nickInput = document.getElementById(`player-nick-${i}`);
-    const colorSelect = document.getElementById(`player-color-${i}`);
-    const name = (nickInput && nickInput.value.trim()) ? nickInput.value.trim() : `Jugador ${i+1}`;
-    const color = colorSelect ? colorSelect.value : COLOR_OPTIONS[i % COLOR_OPTIONS.length].hex;
-    players.push({ name, score: 0, color });
-  }
-  initSDK();
-});
-
-/* ============ WEB PLAYBACK SDK ============ */
+/* ============ WEB PLAYBACK SDK (solo anfitrión) ============ */
 function initSDK(){
-  if (player) {
-    startGame();
-    return;
-  }
+  if (player) { attachRoomListeners(); showScreen('lobby-screen'); return; }
   const script = document.createElement('script');
   script.src = 'https://sdk.scdn.co/spotify-player.js';
   document.body.appendChild(script);
@@ -597,283 +736,396 @@ function initSDK(){
 
 window.onSpotifyWebPlaybackSDKReady = () => {
   player = new Spotify.Player({
-    name: 'Sonnora - Juego',
-    getOAuthToken: cb => cb(accessToken),
-    volume: 0.8
+    name: 'Sonnora - Anfitrión', getOAuthToken: cb => cb(accessToken), volume: 0.8
   });
-
   player.addListener('ready', ({ device_id }) => {
     deviceId = device_id;
-    startGame();
+    attachRoomListeners();
+    showScreen('lobby-screen');
   });
-
   player.addListener('initialization_error', ({message}) => alert('Error init SDK: '+message));
   player.addListener('authentication_error', ({message}) => alert('Error auth SDK: '+message));
   player.addListener('account_error', ({message}) => alert('Se requiere cuenta Premium: '+message));
-
   player.connect();
 };
 
-/* ============ GAME LOGIC & THEME SWITCHING ============ */
-function startGame(){
-  document.getElementById('setup-screen').classList.add('hidden');
-  document.getElementById('players-screen').classList.add('hidden');
-  document.getElementById('game-screen').classList.remove('hidden');
-  currentIndex = 0;
-  loadRound();
-}
-
-function setPlayerTheme(playerIndex) {
-  const color = players[playerIndex].color;
-  document.documentElement.style.setProperty('--green', color);
-  
-  const mainCard = document.getElementById('main-card');
-  mainCard.style.borderColor = color;
-
-  const turnBanner = document.getElementById('turn-banner');
-  turnBanner.style.color = color;
-  turnBanner.style.borderColor = color;
-}
-
-function renderScoreboard() {
-  const sb = document.getElementById('scoreboard');
-  sb.innerHTML = '';
-  players.forEach((p, idx) => {
-    const card = document.createElement('div');
-    card.className = `player-card ${idx === currentPlayerIndex ? 'active-turn' : ''}`;
-    if (idx === currentPlayerIndex) {
-      card.style.borderColor = p.color;
-    }
-    card.innerHTML = `
-      <div class="p-name" style="color:${p.color};">${p.name}</div>
-      <div class="p-score">${p.score} ⭐</div>
-    `;
-    sb.appendChild(card);
+/* ============ LISTENERS DE LA SALA (host + invitados) ============ */
+function attachRoomListeners(){
+  roomRef.child('players').on('value', snap => { roomPlayers = snap.val() || {}; render(); });
+  roomRef.child('tracks').on('value', snap => { roomTracks = snap.val() || []; });
+  roomRef.child('settings').on('value', snap => { roomSettings = snap.val() || {}; });
+  roomRef.child('state').on('value', snap => {
+    roomState = snap.val() || {};
+    roomTurnOrder = roomState.turnOrder || [];
+    render();
   });
+  if(isHost){
+    roomRef.child('playbackRequest').on('value', snap => {
+      const req = snap.val();
+      if(!req || req.nonce === lastHandledPlaybackNonce) return;
+      lastHandledPlaybackNonce = req.nonce;
+      executeHostPlayback(req);
+    });
+  }
+  if(!uiTimerInterval){ uiTimerInterval = setInterval(tickLocalTimers, 250); }
 }
 
-function loadRound(){
-  if(currentIndex >= tracks.length){ return endGame(); }
-  
-  currentPlayerIndex = currentIndex % players.length;
-  const activePlayer = players[currentPlayerIndex];
+/* ============ REPRODUCCIÓN (solo ejecuta el anfitrión) ============ */
+async function executeHostPlayback(req){
+  if(!deviceId || !roomTracks.length) return;
+  const track = roomTracks[roomState.currentIndex];
+  if(!track) return;
+  if(req.secs === 'full'){
+    await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+      method:'PUT', headers:{ 'Authorization':'Bearer '+accessToken, 'Content-Type':'application/json' },
+      body: JSON.stringify({ uris:[track.uri] })
+    }).catch(()=>{});
+    return;
+  }
+  const positionMs = roomState.startPositionMs || 0;
+  await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+    method:'PUT', headers:{ 'Authorization':'Bearer '+accessToken, 'Content-Type':'application/json' },
+    body: JSON.stringify({ uris:[track.uri], position_ms: positionMs })
+  }).catch(()=>{});
+  setTimeout(() => {
+    fetch(`https://api.spotify.com/v1/me/player/pause`, { method:'PUT', headers:{ 'Authorization':'Bearer '+accessToken }}).catch(()=>{});
+  }, req.secs*1000);
+}
+function requestPlayback(secs){
+  roomRef.child('playbackRequest').set({ secs, nonce: Math.random().toString(36).slice(2), ts: Date.now() });
+}
 
-  setPlayerTheme(currentPlayerIndex);
-  
-  document.getElementById('current-player-name').textContent = `${activePlayer.name}`;
-  renderScoreboard();
+/* ============ LOBBY ============ */
+function renderLobby(){
+  document.getElementById('room-code-display').textContent = roomCode || '------';
+  const list = document.getElementById('lobby-list');
+  const order = roomTurnOrder.length ? roomTurnOrder : Object.keys(roomPlayers).sort((a,b)=>(roomPlayers[a].order||0)-(roomPlayers[b].order||0));
+  list.innerHTML = order.map(pid => {
+    const p = roomPlayers[pid]; if(!p) return '';
+    return `<div class="lobby-row"><span class="lobby-dot" style="background:${p.color}"></span><span class="lobby-name">${p.name}${pid===myPlayerId?' (tú)':''}</span></div>`;
+  }).join('');
 
-  currentTrack = tracks[currentIndex];
-  currentTierPlaying = null;
-  attemptsUsed = 0;
-  tenUsed = false;
-  roundResolved = false;
-  timerStarted = false;
-  timeLeft = ROUND_SECONDS;
-  clearInterval(timerInterval);
-  clearTimeout(playTimeout);
+  document.getElementById('start-room-btn').classList.toggle('hidden', !isHost);
+  document.getElementById('lobby-waiting-note').classList.toggle('hidden', isHost);
+}
+document.getElementById('start-room-btn').addEventListener('click', () => {
+  if(!isHost) return;
+  hostLoadRound(0, 0);
+});
+
+/* ============ CARGA DE RONDA (solo el anfitrión escribe esto) ============ */
+function hostLoadRound(idx, turnIdx){
+  const track = roomTracks[idx];
+  const dur = track.duration_ms || 30000;
+  const maxStart = Math.max(0, dur - 15000);
+  let startPositionMs = Math.floor(Math.random() * Math.max(1, maxStart - 5000)) + 5000;
+  if (startPositionMs > maxStart) startPositionMs = 0;
 
   fetch(`https://api.spotify.com/v1/me/player/pause`, { method:'PUT', headers:{ 'Authorization':'Bearer '+accessToken }}).catch(()=>{});
 
-  const dur = currentTrack.duration_ms || 30000;
-  const maxStart = Math.max(0, dur - 15000);
-  startPositionMs = Math.floor(Math.random() * Math.max(1, maxStart - 5000)) + 5000;
-  if (startPositionMs > maxStart) startPositionMs = 0;
-
-  document.getElementById('progress-label').textContent = `Canción ${currentIndex+1} de ${tracks.length}`;
-  
-  const timerLabel = document.getElementById('timer-label');
-  timerLabel.classList.remove('timer-urgent');
-  if (useTimer) {
-    timerLabel.textContent = `⏱ ${ROUND_SECONDS}s`;
-  } else {
-    timerLabel.textContent = `⏱ Sin límite`;
-  }
-
-  document.getElementById('attempts-label').textContent = `Intento 0/${MAX_ATTEMPTS}`;
-  document.getElementById('track-hint').textContent = '🔒 Canción oculta — elige cuántos segundos escuchar';
-  document.getElementById('guess-input').value = '';
-  document.getElementById('guess-input').disabled = false;
-  document.getElementById('guess-btn').disabled = false;
-  document.getElementById('feedback').textContent = '';
-  document.getElementById('feedback').className = '';
-  document.getElementById('answer-reveal').textContent = '';
-  document.getElementById('next-btn').classList.add('hidden');
-
-  [1,3,10].forEach(s=>{
-    const b = document.getElementById('tier-'+s);
-    b.disabled = false; b.classList.remove('playing');
+  roomRef.child('state').update({
+    phase: 'main', currentIndex: idx, turnIndex: turnIdx,
+    roundStartTs: null, stealStartTs: null, attemptsUsed: 0, tenUsed: false,
+    stealWinnerId: null, lastResult: null, startPositionMs
   });
 }
 
-function startCountdown(){
-  if (!useTimer) return;
-  timeLeft = ROUND_SECONDS;
+/* ============ RENDER PRINCIPAL ============ */
+function render(){
+  if(!roomState || !roomState.phase){ return; }
+
+  if(roomState.phase === 'lobby'){
+    showScreen('lobby-screen');
+    renderLobby();
+    return;
+  }
+  if(roomState.phase === 'ended'){
+    renderEnd();
+    return;
+  }
+  showScreen('game-screen');
+  renderGame();
+}
+
+function currentTurnPlayerId(){ return roomTurnOrder[roomState.turnIndex]; }
+function isMyTurn(){ return currentTurnPlayerId() === myPlayerId; }
+function myTeamCount(){ return roomTurnOrder.length; }
+
+function setTheme(color){
+  document.documentElement.style.setProperty('--green', color);
+  document.getElementById('main-card').style.borderColor = color;
+  const tb = document.getElementById('turn-banner');
+  tb.style.color = color; tb.style.borderColor = color;
+}
+
+function renderGame(){
+  const track = roomTracks[roomState.currentIndex];
+  if(!track) return;
+  const turnPlayer = roomPlayers[currentTurnPlayerId()];
+  if(!turnPlayer) return;
+  setTheme(turnPlayer.color);
+
+  document.getElementById('current-player-name').textContent = turnPlayer.name;
+  document.getElementById('progress-label').textContent = `Canción ${roomState.currentIndex+1} de ${roomTracks.length}`;
+  document.getElementById('attempts-label').textContent = `Intento ${roomState.attemptsUsed||0}/${roomSettings.maxAttempts||MAX_ATTEMPTS}`;
+
+  // tablero
+  const sb = document.getElementById('scoreboard');
+  sb.innerHTML = roomTurnOrder.map(pid => {
+    const p = roomPlayers[pid]; if(!p) return '';
+    const active = pid === currentTurnPlayerId();
+    return `<div class="player-card ${active?'active-turn':''} ${pid===myPlayerId?'me':''}" ${active?`style="border-color:${p.color}"`:''}>
+      <div class="p-name" style="color:${p.color}">${p.name}</div>
+      <div class="p-score">${p.score||0} ⭐</div>
+    </div>`;
+  }).join('');
+
+  // fases
+  const steal = document.getElementById('steal-banner');
+  steal.classList.toggle('hidden', roomState.phase !== 'steal');
+
+  const amTurnHolder = isMyTurn();
+  const inStealPhase = roomState.phase === 'steal';
+  const resolved = roomState.phase === 'resolved';
+
+  // botones de tiers: solo el jugador en turno, solo en fase 'main'
+  [1,3,10].forEach(s=>{
+    const b = document.getElementById('tier-'+s);
+    let enabled = amTurnHolder && roomState.phase === 'main' && !resolved;
+    if(s === 10 && roomState.tenUsed) enabled = false;
+    b.disabled = !enabled;
+    b.classList.toggle('playing', false);
+  });
+
+  // input de respuesta
+  const guessInput = document.getElementById('guess-input');
+  const guessBtn = document.getElementById('guess-btn');
+  const canGuess = (!resolved) && (
+    (roomState.phase === 'main' && amTurnHolder) ||
+    (roomState.phase === 'steal' && !amTurnHolder)
+  );
+  guessInput.disabled = !canGuess;
+  guessBtn.disabled = !canGuess;
+  document.getElementById('guess-label').textContent = inStealPhase && !amTurnHolder
+    ? '¡Es tu oportunidad de robar! Escribe tu respuesta'
+    : 'Tu respuesta (canción o artista)';
+
+  document.getElementById('track-hint').textContent = amTurnHolder
+    ? '🔒 Canción oculta — elige cuántos segundos escuchar'
+    : `🔒 Canción oculta — le toca a ${turnPlayer.name}`;
+
+  // resultado
+  const fb = document.getElementById('feedback');
+  const reveal = document.getElementById('answer-reveal');
+  if(resolved && roomState.lastResult){
+    const r = roomState.lastResult;
+    reveal.textContent = `🎵 ${track.name} — ${track.artists.join(', ')}`;
+    if(r.correct){
+      const who = roomPlayers[r.playerId] ? roomPlayers[r.playerId].name : '???';
+      fb.textContent = r.mode === 'steal' ? `¡${who} robó la ronda! +1⭐` : `¡Correcto, ${who}! +${r.stars}⭐`;
+      fb.className = 'ok';
+    } else {
+      fb.textContent = '⏱ Nadie adivinó esta ronda';
+      fb.className = 'bad';
+    }
+  } else if(!resolved) {
+    reveal.textContent = '';
+    if(!localAttemptFeedbackShown) fb.textContent = '';
+  }
+
+  // botón siguiente: solo anfitrión
+  document.getElementById('next-btn').classList.toggle('hidden', !(resolved && isHost));
+  document.getElementById('game-waiting-note').classList.toggle('hidden', !(resolved && !isHost));
+  document.getElementById('force-next-btn').classList.toggle('hidden', !(isHost && !resolved));
+}
+
+/* ============ TIMERS LOCALES (cada dispositivo calcula su cuenta regresiva) ============ */
+function tickLocalTimers(){
+  if(!roomState || !roomState.phase) return;
+
   const timerLabel = document.getElementById('timer-label');
-  timerLabel.textContent = `⏱ ${timeLeft}s`;
+  const playWithTimer = !!(roomSettings && roomSettings.playWithTimer);
 
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    timerLabel.textContent = `⏱ ${Math.max(timeLeft,0)}s`;
-
-    if (timeLeft <= 10) {
-      timerLabel.classList.add('timer-urgent');
+  if(roomState.phase === 'main'){
+    if(!playWithTimer){
+      timerLabel.textContent = '⏱ Sin límite';
+      timerLabel.classList.remove('timer-urgent');
+      return;
     }
-
-    if(timeLeft <= 0){
-      clearInterval(timerInterval);
-      handleTimeUp();
+    if(!roomState.roundStartTs){
+      timerLabel.textContent = `⏱ ${ROUND_SECONDS}s`;
+      timerLabel.classList.remove('timer-urgent');
+      return;
     }
-  }, 1000);
+    const elapsed = Math.floor((Date.now() - roomState.roundStartTs)/1000);
+    const remaining = Math.max(0, ROUND_SECONDS - elapsed);
+    timerLabel.textContent = `⏱ ${remaining}s`;
+    timerLabel.classList.toggle('timer-urgent', remaining <= 10);
+
+    if(remaining <= 0){
+      // solo el jugador en turno intenta la transición, para no duplicar escrituras
+      if(isMyTurn()){
+        if(myTeamCount() >= 2){
+          roomRef.child('state').update({ phase:'steal', stealStartTs: Date.now() });
+        } else {
+          roomRef.child('state').update({ phase:'resolved', lastResult: { correct:false, mode:'timeout' } });
+          requestPlayback('full');
+        }
+      }
+    }
+  } else if(roomState.phase === 'steal'){
+    const stealEl = document.getElementById('steal-timer-label');
+    const elapsed = Math.floor((Date.now() - (roomState.stealStartTs||Date.now()))/1000);
+    const remaining = Math.max(0, STEAL_SECONDS - elapsed);
+    if(stealEl) stealEl.textContent = `${remaining}s`;
+    timerLabel.textContent = `⏱ Robo: ${remaining}s`;
+    timerLabel.classList.toggle('timer-urgent', remaining <= 5);
+
+    if(remaining <= 0){
+      roomRef.child('state').update({ phase:'resolved', lastResult: { correct:false, mode:'timeout' } });
+      requestPlayback('full');
+    }
+  } else {
+    timerLabel.classList.remove('timer-urgent');
+  }
 }
 
-function handleTimeUp(){
-  if(roundResolved) return;
-  finishRound(false, true);
-}
-
+/* ============ ACCIONES DE JUGADOR ============ */
 [1,3,10].forEach(secs=>{
   document.getElementById('tier-'+secs).addEventListener('click', () => playTier(secs));
 });
 
+let lastTierPlayedByMe = null;
+
 async function playTier(secs){
-  if(roundResolved) return;
-  if(secs === 10 && tenUsed) return;
-  if(secs === 10) tenUsed = true;
+  if(!isMyTurn() || roomState.phase !== 'main') return;
+  if(secs === 10 && roomState.tenUsed) return;
 
-  if(secs === 1 && !timerStarted && useTimer){
-    timerStarted = true;
-    startCountdown();
-  }
-
-  currentTierPlaying = secs;
-  clearTimeout(playTimeout);
+  lastTierPlayedByMe = secs;
 
   const btn = document.getElementById('tier-'+secs);
   [1,3,10].forEach(s => document.getElementById('tier-'+s).classList.remove('playing'));
   btn.classList.add('playing');
+  setTimeout(()=>btn.classList.remove('playing'), secs*1000);
 
-  await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-    method:'PUT',
-    headers:{ 'Authorization':'Bearer '+accessToken, 'Content-Type':'application/json' },
-    body: JSON.stringify({ uris:[currentTrack.uri], position_ms: startPositionMs })
-  });
+  requestPlayback(secs);
 
-  playTimeout = setTimeout(async () => {
-    await fetch(`https://api.spotify.com/v1/me/player/pause`, {
-      method:'PUT', headers:{ 'Authorization':'Bearer '+accessToken }
-    });
-    btn.classList.remove('playing');
-  }, secs*1000);
-
-  if(secs === 10){
-    document.getElementById('tier-10').disabled = true;
-  }
-}
-
-function normalize(str){
-  return str.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^a-z0-9 ]/g,'').trim();
+  const updates = {};
+  if(secs === 1 && !roomState.roundStartTs){ updates.roundStartTs = Date.now(); }
+  if(secs === 10){ updates.tenUsed = true; }
+  if(Object.keys(updates).length) await roomRef.child('state').update(updates);
 }
 
 document.getElementById('guess-btn').addEventListener('click', submitGuess);
 document.getElementById('guess-input').addEventListener('keydown', e => { if(e.key==='Enter') submitGuess(); });
 
-function submitGuess(){
-  if(roundResolved) return;
+async function submitGuess(){
+  const track = roomTracks[roomState.currentIndex];
+  if(!track) return;
   const raw = document.getElementById('guess-input').value.trim();
   if(!raw) return;
 
-  attemptsUsed++;
-  document.getElementById('attempts-label').textContent = `Intento ${attemptsUsed}/${MAX_ATTEMPTS}`;
-
   const guess = normalize(raw);
-  const nameNorm = normalize(currentTrack.name);
-  const artistNorm = currentTrack.artists.map(normalize);
-
+  const nameNorm = normalize(track.name);
+  const artistNorm = track.artists.map(normalize);
   const correct = guess.length > 2 && (
     nameNorm.includes(guess) || guess.includes(nameNorm) ||
-    (validationMode === 'title-artist' && artistNorm.some(a => a.includes(guess) || guess.includes(a)))
+    (roomSettings.validationMode === 'title-artist' && artistNorm.some(a => a.includes(guess) || guess.includes(a)))
   );
 
-  if(correct){
-    finishRound(true, false);
-    return;
+  if(roomState.phase === 'main' && isMyTurn()){
+    const newAttempts = (roomState.attemptsUsed||0) + 1;
+    if(correct){
+      const stars = 1; // placeholder, se recalcula abajo con el último tier reproducido
+      const lastTier = getLastTierPlayedGuess();
+      const finalStars = lastTier === 1 ? 3 : lastTier === 3 ? 2 : 1;
+      await incrementScore(myPlayerId, finalStars);
+      await roomRef.child('state').update({ phase:'resolved', lastResult:{ correct:true, stars:finalStars, playerId: myPlayerId, mode:'main' } });
+      requestPlayback('full');
+      document.getElementById('guess-input').value = '';
+      return;
+    }
+    await roomRef.child('state/attemptsUsed').set(newAttempts);
+    if(newAttempts >= (roomSettings.maxAttempts||MAX_ATTEMPTS)){
+      const fb = document.getElementById('feedback');
+      fb.textContent = 'Sin más intentos — espera a que termine el tiempo…';
+      fb.className = 'bad';
+      localAttemptFeedbackShown = true;
+    } else {
+      const fb = document.getElementById('feedback');
+      fb.textContent = `Incorrecto, te quedan ${(roomSettings.maxAttempts||MAX_ATTEMPTS) - newAttempts} intento(s)`;
+      fb.className = 'bad';
+      localAttemptFeedbackShown = true;
+      document.getElementById('guess-input').value = '';
+      document.getElementById('guess-input').focus();
+    }
+  } else if(roomState.phase === 'steal' && !isMyTurn()){
+    if(!correct){
+      const fb = document.getElementById('feedback');
+      fb.textContent = 'Incorrecto — sigue intentando';
+      fb.className = 'bad';
+      document.getElementById('guess-input').value = '';
+      return;
+    }
+    const res = await roomRef.child('state/stealWinnerId').transaction(cur => (cur===null||cur===undefined) ? myPlayerId : cur);
+    if(res.committed && res.snapshot.val() === myPlayerId){
+      await incrementScore(myPlayerId, 1);
+      await roomRef.child('state').update({ phase:'resolved', lastResult:{ correct:true, stars:1, playerId: myPlayerId, mode:'steal' } });
+      requestPlayback('full');
+    } else {
+      const fb = document.getElementById('feedback');
+      fb.textContent = 'Otro jugador ya la adivinó justo antes 😅';
+      fb.className = 'bad';
+    }
   }
-
-  if(attemptsUsed >= MAX_ATTEMPTS){
-    finishRound(false, false);
-    return;
-  }
-
-  const fb = document.getElementById('feedback');
-  fb.textContent = `Incorrecto, te quedan ${MAX_ATTEMPTS - attemptsUsed} intento(s)`;
-  fb.className = 'bad';
-  document.getElementById('guess-input').value = '';
-  document.getElementById('guess-input').focus();
 }
 
-function finishRound(correct, timeUp){
-  roundResolved = true;
-  clearInterval(timerInterval);
-  clearTimeout(playTimeout);
+function getLastTierPlayedGuess(){ return lastTierPlayedByMe || 10; }
 
-  const fb = document.getElementById('feedback');
-  const reveal = document.getElementById('answer-reveal');
-  reveal.textContent = `🎵 ${currentTrack.name} — ${currentTrack.artists.join(', ')}`;
-
-  if(correct){
-    const stars = currentTierPlaying === 1 ? 3 : currentTierPlaying === 3 ? 2 : 1;
-    players[currentPlayerIndex].score += stars;
-    renderScoreboard();
-    fb.textContent = `¡Correcto, ${players[currentPlayerIndex].name}! +${stars}⭐`;
-    fb.className = 'ok';
-  } else if(timeUp){
-    fb.textContent = '⏱ Se acabó el tiempo — no adivinaron';
-    fb.className = 'bad';
-  } else {
-    fb.textContent = 'Sin más intentos 😕';
-    fb.className = 'bad';
-  }
-
-  document.getElementById('guess-input').disabled = true;
-  document.getElementById('guess-btn').disabled = true;
-  [1,3,10].forEach(s=>document.getElementById('tier-'+s).disabled = true);
-  document.getElementById('next-btn').classList.remove('hidden');
-
-  fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-    method:'PUT',
-    headers:{ 'Authorization':'Bearer '+accessToken, 'Content-Type':'application/json' },
-    body: JSON.stringify({ uris:[currentTrack.uri] })
-  }).catch(()=>{});
+function incrementScore(playerId, stars){
+  return roomRef.child('players/'+playerId+'/score').transaction(cur => (cur||0) + stars);
 }
 
-document.getElementById('next-btn').addEventListener('click', () => {
-  currentIndex++;
-  loadRound();
+/* ============ SIGUIENTE RONDA / FORZAR (solo anfitrión) ============ */
+document.getElementById('next-btn').addEventListener('click', () => { if(isHost) hostAdvance(); });
+document.getElementById('force-next-btn').addEventListener('click', () => {
+  if(!isHost) return;
+  if(roomState.phase === 'resolved') return;
+  roomRef.child('state').update({ phase:'resolved', lastResult:{ correct:false, mode:'timeout' } });
+  requestPlayback('full');
 });
 
-function endGame(){
-  document.getElementById('game-screen').classList.add('hidden');
-  document.getElementById('end-screen').classList.remove('hidden');
-  
-  const sorted = [...players].sort((a,b) => b.score - a.score);
+function hostAdvance(){
+  const nextIdx = roomState.currentIndex + 1;
+  if(nextIdx >= roomTracks.length){
+    roomRef.child('state/phase').set('ended');
+    return;
+  }
+  const nextTurn = (roomState.turnIndex + 1) % roomTurnOrder.length;
+  lastTierPlayedByMe = null;
+  localAttemptFeedbackShown = false;
+  hostLoadRound(nextIdx, nextTurn);
+}
+
+/* ============ FIN DEL JUEGO ============ */
+function renderEnd(){
+  showScreen('end-screen');
+  const order = roomTurnOrder.length ? roomTurnOrder : Object.keys(roomPlayers);
+  const list = order.map(pid => roomPlayers[pid]).filter(Boolean);
+  const sorted = [...list].sort((a,b)=>(b.score||0)-(a.score||0));
   const container = document.getElementById('final-results');
-  
-  let html = `<h2 style="color:var(--green);">🏆 ¡Ganador: ${sorted[0].name}!</h2>`;
+  let html = `<h2 style="color:var(--green);">🏆 ¡Ganador: ${sorted[0] ? sorted[0].name : '—'}!</h2>`;
   html += `<div style="text-align:left; background:#101018; padding:16px; border-radius:12px; margin-top:14px;">`;
   sorted.forEach((p, i) => {
     html += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #222;">
-      <span>${i+1}. <b style="color:${p.color};">${p.name}</b></span>
-      <b>${p.score} ⭐</b>
+      <span>${i+1}. <b style="color:${p.color};">${p.name}</b></span><b>${p.score||0} ⭐</b>
     </div>`;
   });
   html += `</div>`;
   container.innerHTML = html;
 }
 
-document.getElementById('restart-btn').addEventListener('click', () => window.location.reload());
+document.getElementById('restart-btn').addEventListener('click', () => window.location.href = window.location.pathname);
 </script>
 </body>
 </html>

@@ -369,11 +369,11 @@ const REDIRECT_URI = window.location.origin + window.location.pathname;
 const SCOPES = "streaming user-read-email user-read-private playlist-read-private playlist-read-collaborative";
 document.getElementById('redirect-uri-display').textContent = REDIRECT_URI;
 
-const PLAYER_COLORS = ['#3b82f6', '#ef4444', '#10b981', '#eab308']; // azul, rojo, verde, amarillo
+const PLAYER_COLORS = ['#10b981', '#05f7db','#3b82f6','#780fff','#d746f0','#f76505''#ef4444', '#eab308',]; // verde, aqua, azul, morado, rojo, amarillo, rosa, naranja (no en ese orden, fk it)
 const MAX_ATTEMPTS = 3;
 const ROUND_SECONDS = 45;
 const STEAL_SECONDS = 10;
-const MAX_PLAYERS = 4;
+const MAX_PLAYERS = 6;
 
 /* ============ PKCE HELPERS ============ */
 function randomString(len){

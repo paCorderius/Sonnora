@@ -1,57 +1,71 @@
-# 🎧 Sonnora — Juego de Adivinar Canciones con Spotify
+# Sonnora — adivina la canción con tus amigos
 
-Juego sobre adivinar canciones de una playlist de Spotify escuchando fragmentos de 1, 3 o 10 segundos. Soporta partidas de 1 a 4 jugadores (o equipos) por turnos, con tablero de puntuación y color de interfaz personalizado por jugador.
+Juego para adivinar canciones de una playlist de Spotify escuchando fragmentos de 1, 3 o 10 segundos. El anfitrión crea una sala y pone la música desde su cuenta Spotify Premium. Los demás (hasta 4 jugadores en total) se unen desde su propio teléfono con un código de 5 letras, sin necesidad de cuenta.
 
-## Cómo jugar
+## Cómo se juega
 
-1. **Conectar**: pega tu Client ID y presiona "Conectar con Spotify" (te pedirá login/permiso). Al conectar arranca un temporizador de **1 hora** (duración real del token de Spotify) visible en la barra superior; cuando se acerque a expirar, vuelve a conectar.
-2. **Configurar la partida**: pega el link de la playlist y elige:
-   - **Validación de respuesta**: solo nombre de la canción, o nombre y artista.
-   - **Modo de temporizador**: con límite de 45s por ronda, o sin límite.
-   - **Número de jugadores**: de 1 a 4.
-   - **Número de canciones**: hasta 60 (el juego sugiere que sea múltiplo del número de jugadores para repartir turnos parejo).
-3. **Jugadores**: ingresa el nickname y elige un color para cada uno (Azul, Rojo, Verde, Amarillo, Rosa o Morado). El orden en que los configuras define el orden de turnos.
-4. **Jugar cada ronda**:
-   - Elige cuántos segundos escuchar. Los samples de **1s y 3s se pueden repetir** las veces que quieras; el de **10s solo se escucha una vez**.
-   - Si el modo con temporizador está activo, al reproducir el primer sample de 1s arranca una cuenta regresiva de 45s (se pone grande, en negritas y roja/parpadeante en los últimos 10s). Si llega a 0, la ronda se pierde automáticamente.
-   - Tienes **3 intentos** para adivinar.
-   - Al acertar, fallar los 3 intentos o agotarse el tiempo, la canción se reproduce **completa y normal** hasta que presionas "Siguiente canción".
-5. El color de la interfaz (bordes, botones, temporizador) cambia según el jugador en turno, y el tablero de puntuación muestra el nickname y las estrellas de cada uno.
-6. Al terminar todas las canciones verás el resultado final: puntaje único (1 jugador) o el ranking completo con el ganador destacado (2-4 jugadores).
+1. **El anfitrión crea la sala.** Toca *Crear sala*, conecta su cuenta de Spotify, pega el link de una playlist suya y elige:
+   - **Qué cuenta como respuesta:** solo el nombre de la canción, o el nombre de la canción o del artista.
+   - **Temporizador:** 45 s por ronda más 10 s para robar, o sin límite de tiempo (sin robo).
+   - **Número de canciones:** hasta 60. Lo ideal es un múltiplo del número de jugadores.
+2. **Los demás se unen.** Tocan *Unirme con código*, escriben el código, eligen color y nombre. El orden en que entran es el orden de turnos.
+3. **En cada turno:**
+   - El jugador en turno elige cuánto escuchar. Los fragmentos de 1 s y 3 s se pueden repetir; el de 10 s solo una vez.
+   - **Las estrellas dependen del fragmento más largo que hayas escuchado en la ronda:** 1 s = 3 estrellas, 3 s = 2, 10 s = 1.
+   - Hay que escuchar al menos un fragmento antes de poder responder.
+   - Con temporizador, el reloj de 45 s arranca con el primer fragmento.
+   - Hay 3 intentos. Si se acaban los intentos o el tiempo, los demás tienen 10 s para **robar** la ronda por 1 estrella (solo con temporizador y 2 jugadores o más).
+   - Al terminar la ronda suena la canción completa y el anfitrión pasa a la siguiente.
+4. **Al final** se muestra el podio con los tres primeros lugares.
+
+La interfaz toma el color del jugador en turno (barra de turno y botones de fragmento).
+
+### Qué cuenta como respuesta correcta
+
+- No importan mayúsculas, acentos ni signos de puntuación.
+- Se ignoran agregados del título como "(feat. …)", "[Live]" o "- Remastered 2011".
+- Se aceptan errores de dedo pequeños (más o menos uno cada 5 letras).
+- Se puede escribir de más, siempre que vaya el título completo ("bohemian rhapsody de queen").
+- Una palabra suelta del título **no** cuenta ("rhapsody" no acierta "Bohemian Rhapsody").
+- Funciona con títulos en cualquier alfabeto (japonés, coreano, cirílico, etc.).
 
 ## Requisitos
 
-- Cuenta Spotify **Premium** en cada dispositivo donde se vaya a reproducir audio (obligatorio para el Web Playback SDK).
+- **Anfitrión:** cuenta Spotify **Premium** y un navegador compatible con el Web Playback SDK de Spotify.
+- **Invitados:** solo el código de la sala. No necesitan cuenta de Spotify.
 - Una app creada en el [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
-- Python o Node instalados (para servir el archivo localmente), o un hosting estático si lo vas a desplegar online.
+- Un proyecto de Firebase con Realtime Database (ya configurado en `index.html`).
 
-## Configuración (una sola vez)
+> **Límites de Spotify (desde febrero de 2026):** las apps en modo *Development* requieren que el dueño de la app tenga Premium y tienen un límite bajo de usuarios autorizados. Además, Spotify solo entrega las canciones de playlists que son tuyas o en las que colaboras. Revisa la [guía de migración de Spotify](https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide) para los detalles vigentes.
+
+## Configuración de Spotify (una sola vez)
 
 1. Entra a tu app en el [Dashboard de Spotify](https://developer.spotify.com/dashboard) → **Settings**.
-2. En **Redirect URIs**, agrega exactamente la URL donde vas a abrir el juego:
-   - Local: `http://127.0.0.1:8080/index.html` (Spotify ya no acepta `localhost`, usa `127.0.0.1`)
-   - Desplegado: la URL pública exacta (por ejemplo `https://tuusuario.github.io/sonnora/index.html`)
-3. Guarda cambios.
-4. Copia tu **Client ID** (no necesitas el Client Secret — el juego usa PKCE, sin backend).
-5. Si tu app sigue en modo **Development** en el dashboard, agrega el correo de cada persona que vaya a loguearse en **User Management** (límite de 25 usuarios sin aprobación de Spotify).
+2. En **Redirect URIs** agrega exactamente la URL donde abres el juego:
+   - Local: `http://127.0.0.1:8080/index.html` (Spotify no acepta `localhost`).
+   - GitHub Pages: la URL pública exacta, por ejemplo `https://tuusuario.github.io/Sonnora/index.html`.
+3. Guarda los cambios y copia el **Client ID**. No necesitas el Client Secret: el juego usa PKCE, sin backend.
+4. Si la app está en modo *Development*, agrega en **User Management** el correo de cada persona que vaya a ser anfitrión.
 
-## Jugar desplegado en GitHub Pages (online)
+La sesión de Spotify se renueva sola mientras juegas, así que no se corta a la hora.
 
-Sonnora no tiene backend ni servidor propio: es un solo archivo HTML que corre 100% en el navegador de quien lo abre. Desplegarlo en GitHub Pages solo cambia *dónde* vive el archivo — no cambia cómo funciona el login ni comparte nada entre jugadores. Esto es importante para entender el modo de juego:
+## Configuración de Firebase
 
-- **Cada persona necesita su propio Client ID.** El login es por navegador y por Client ID, no por dominio. Que el juego esté en una URL pública no significa que tus amigos usen tu autorización — cada uno debe:
-  1. Crear su propia app en su [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
-  2. Agregar tu misma URL de GitHub Pages como Redirect URI en **su** app.
-  3. Pegar **su propio** Client ID en el campo de la pantalla de login cuando entre a jugar.
-- **Cada uno necesita cuenta Premium.** El Web Playback SDK reproduce el audio dentro del navegador de quien está logueado en ese momento, así que sin Premium esa persona no podrá escuchar los fragmentos.
-- **La sesión es individual, no compartida.** El token, el Client ID y el timestamp de expiración se guardan en el `localStorage` del navegador de cada quien. Si dos amigos abren la misma URL desde dispositivos distintos, cada uno tiene su propia sesión independiente — no hay nada centralizado ni un "anfitrión" del lado del servidor.
-- **Modo de juego real: un dispositivo, turnos pasados a mano.** El modo multijugador (2-4 jugadores) está pensado para jugarse desde **una sola pantalla/dispositivo**, donde los jugadores se van pasando el turno físicamente. No es multijugador en tiempo real entre dispositivos distintos — cada quien vería su propia partida si abre el link por separado.
-- **App en modo "Development" en Spotify**: mientras tu app no esté aprobada por Spotify en modo "Extended Quota", solo pueden loguearse los correos que agregues manualmente en **User Management** del dashboard (máximo 25). Esto solo aplica si tus amigos usan **tu** Client ID; si cada quien crea el suyo propio (recomendado, ver arriba), este límite no les afecta.
-- **Playlists privadas**: si la playlist es privada y no pertenece a la cuenta que hace login (ni está guardada en su biblioteca), la API puede devolver error 403 al leer las canciones. Usa una playlist pública, o pide a cada jugador que la guarde en su propia cuenta antes de jugar.
+1. En la [consola de Firebase](https://console.firebase.google.com/), abre el proyecto → **Realtime Database** → **Reglas**.
+2. Copia el contenido de `database.rules.json`, pégalo y toca **Publicar**.
 
-## Cómo correrlo en local
+Estas reglas:
+- Solo aceptan salas con la forma que usa el juego (código de 5 letras, máximo 4 jugadores, nombres de hasta 20 caracteres, etc.).
+- Impiden listar todas las salas.
+- Permiten que el juego borre automáticamente salas abandonadas de hace más de 24 horas. Cada vez que alguien crea una sala, se borran hasta 20 salas viejas.
 
-Desde esta carpeta, levanta un servidor local (elige uno):
+Las salas también se borran cuando el anfitrión toca *Salir* o *Jugar de nuevo*.
+
+> El juego no usa inicio de sesión en Firebase, así que cualquiera que conozca el código de una sala puede escribir en ella. Para una app pública, el siguiente paso sería activar Firebase Authentication anónima y limitar las escrituras por usuario.
+
+## Correrlo en local
+
+Desde esta carpeta:
 
 ```bash
 # Con Python 3
@@ -61,16 +75,28 @@ python3 -m http.server 8080
 npx serve -l 8080
 ```
 
-Abre en el navegador `http://127.0.0.1:8080/index.html` — debe coincidir EXACTO con el Redirect URI registrado en el paso anterior.
+Abre `http://127.0.0.1:8080/index.html`. Debe coincidir exactamente con la Redirect URI registrada.
 
-## Borrar caché / reiniciar sesión
+## Publicarlo en GitHub Pages
 
-El botón **"🗑️ Borrar caché / Cerrar sesión"** en la barra superior limpia el token, el Client ID guardado y cualquier dato de sesión en `localStorage`, y recarga la página desde cero. Útil si el token expiró o quieres conectar con otra cuenta.
+Sube `index.html` (y este README) al repositorio y activa GitHub Pages en **Settings → Pages**. Registra la URL pública como Redirect URI en Spotify.
+
+## Si algo falla
+
+- **Se recargó la página o se cerró la app:** al volver a abrirla, el juego te reconecta solo a la sala en la que estabas.
+- **El jugador en turno se desconectó:** con temporizador, la ronda avanza sola cuando se acaba el tiempo. Sin temporizador, el anfitrión puede tocar *Saltar esta ronda*.
+- **Sesión de Spotify vencida:** aparece un aviso con el botón *Reconectar*. Al volver de Spotify, regresas a la misma sala.
+- **Cerrar sesión de Spotify:** botón *Cerrar sesión de Spotify* en la pantalla de crear sala.
 
 ## Notas técnicas
 
-- El juego corre 100% en el navegador (sin backend), usando el flujo **Authorization Code + PKCE** de Spotify — no requiere el Client Secret.
-- La reproducción real usa el **Web Playback SDK** de Spotify, que requiere Premium.
-- La sesión (token, Client ID, timestamp del token) se guarda en `localStorage` de tu navegador; nada se envía a ningún servidor propio.
-- Si despliegas el juego en un hosting estático (GitHub Pages, Vercel, Cloudflare Pages, etc.), la Redirect URI se calcula automáticamente según el dominio donde corre — solo debes registrar esa URL nueva en el Spotify Developer Dashboard.
-
+- Todo corre en el navegador: un solo `index.html`, sin servidor propio.
+- **Spotify:** flujo Authorization Code + PKCE con renovación automática del token. El audio lo reproduce el Web Playback SDK en el dispositivo del anfitrión.
+- **Firebase Realtime Database** sincroniza la sala:
+  - Todos los cambios de fase (adivinar, robar, fin del tiempo) se hacen con transacciones, así que solo un dispositivo gana cada cambio y no hay dobles escrituras.
+  - Los temporizadores usan la hora del servidor de Firebase, así que todos los teléfonos ven el mismo tiempo.
+  - Cualquier dispositivo puede cerrar una ronda cuando se acaba el tiempo, no solo el del jugador en turno.
+- Los fragmentos se miden desde que el audio realmente empieza a sonar. Si se pide otro fragmento antes de que termine el anterior, se cancela la pausa pendiente.
+- Al cargar la playlist se descartan canciones locales y canciones no disponibles en el país del anfitrión.
+- Los nombres de los jugadores se muestran siempre como texto, nunca como HTML.
+- La pantalla se mantiene encendida durante la partida (Screen Wake Lock API, donde el navegador lo permite).

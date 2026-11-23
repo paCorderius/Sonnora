@@ -1,0 +1,62 @@
+{
+  "rules": {
+    "rooms": {
+      ".read": "query.orderByChild == 'createdAt' && query.endAt != null && query.endAt < now - 86400000 && query.limitToFirst != null && query.limitToFirst <= 20",
+      ".indexOn": ["createdAt"],
+      "$code": {
+        ".read": "$code.matches(/^[A-HJ-NP-Z2-9]{5}$/)",
+        ".write": "$code.matches(/^[A-HJ-NP-Z2-9]{5}$/) && (data.exists() || newData.hasChildren(['createdAt', 'settings', 'tracks', 'players', 'state']))",
+
+        "createdAt": { ".validate": "newData.isNumber() && newData.val() <= now + 600000" },
+
+        "settings": {
+          "validationMode": { ".validate": "newData.val() == 'title' || newData.val() == 'title-artist'" },
+          "playWithTimer": { ".validate": "newData.isBoolean()" },
+          "maxAttempts": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 10" },
+          "stealSeconds": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 60" },
+          "hostId": { ".validate": "newData.isString() && newData.val().matches(/^p_[a-z0-9]{4,16}$/)" },
+          "$other": { ".validate": false }
+        },
+
+        "tracks": {
+          "$i": {
+            ".validate": "$i.matches(/^([0-9]|[1-5][0-9])$/) && newData.hasChildren(['uri', 'name'])",
+            "uri": { ".validate": "newData.isString() && newData.val().beginsWith('spotify:track:') && newData.val().length <= 64" },
+            "name": { ".validate": "newData.isString() && newData.val().length <= 300" },
+            "artists": { "$a": { ".validate": "newData.isString() && newData.val().length <= 300" } },
+            "duration_ms": { ".validate": "newData.isNumber()" },
+            "$other": { ".validate": false }
+          }
+        },
+
+        "players": {
+          "$pid": {
+            ".validate": "$pid.matches(/^p_[a-z0-9]{4,16}$/) && newData.hasChildren(['name', 'color', 'score'])",
+            "name": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 20" },
+            "color": { ".validate": "newData.isString() && newData.val().matches(/^#[0-9a-f]{6}$/)" },
+            "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 300" },
+            "$other": { ".validate": false }
+          }
+        },
+
+        "state": {
+          ".validate": "newData.hasChildren(['phase'])",
+          "phase": { ".validate": "newData.isString() && newData.val().matches(/^(lobby|main|steal|resolved|ended)$/)" },
+          "turnOrder": {
+            "$i": { ".validate": "$i.matches(/^[0-3]$/) && newData.isString() && newData.val().matches(/^p_[a-z0-9]{4,16}$/)" }
+          }
+        },
+
+        "playbackRequest": {
+          ".validate": "newData.hasChildren(['secs', 'nonce', 'ts'])",
+          "secs": { ".validate": "newData.val() == 1 || newData.val() == 3 || newData.val() == 10 || newData.val() == 'full'" },
+          "nonce": { ".validate": "newData.isString() && newData.val().length <= 20" },
+          "ts": { ".validate": "newData.isNumber() && newData.val() <= now + 60000" },
+          "$other": { ".validate": false }
+        },
+
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

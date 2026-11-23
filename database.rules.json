@@ -10,7 +10,7 @@
         "createdAt": { ".validate": "newData.isNumber() && newData.val() <= now + 600000" },
 
         "settings": {
-          "validationMode": { ".validate": "newData.val() == 'title' || newData.val() == 'title-artist'" },
+          "validationMode": { ".validate": "newData.val() == 'title' || newData.val() == 'approx' || newData.val() == 'title-artist'" },
           "playWithTimer": { ".validate": "newData.isBoolean()" },
           "maxAttempts": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 10" },
           "stealSeconds": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 60" },

@@ -334,6 +334,7 @@
         <label for="validation-mode">¿Qué cuenta como respuesta?</label>
         <select class="input" id="validation-mode">
           <option value="title">Solo el nombre de la canción</option>
+          <option value="approx">Nombre aproximado de la canción</option>
           <option value="title-artist">El nombre de la canción o del artista</option>
         </select>
       </div>
@@ -580,12 +581,37 @@ function answerMatches(guessRaw, targetRaw){
   const guesses = [...new Set([g, stripArticle(g)])];
   const targets = [...new Set([normalize(cleanTitle(targetRaw)), normalize(targetRaw)])]
     .filter(Boolean).flatMap(t => [t, stripArticle(t)]);
+  const wc = (s) => s.split(' ').length;
   return targets.some(t => guesses.some(x =>
     similar(x, t) ||
-    (t.length >= 4 && containsWords(x, t))  // "bohemian rhapsody de queen" contiene el título completo
+    // "bohemian rhapsody de queen" contiene el título completo; se permiten hasta 3 palabras de más
+    (t.length >= 4 && containsWords(x, t) && wc(x) <= wc(t) + 3)
   ));
 }
+/* Modo "nombre aproximado": basta con acertar las palabras importantes del título.
+   Ej.: "bzrp 53" o "music sessions 53" aciertan "Shakira: Bzrp Music Sessions, Vol. 53". */
+const STOPWORDS = new Set(('the a an of and in on to for at by with from ' +
+  'el la los las lo un una unos unas de del al y e o u en con por para que se ' +
+  'feat ft featuring vol volume pt part remix version remastered remaster live edit mix radio original').split(' '));
+function keyWords(str){ return normalize(str).split(' ').filter(w => w && !STOPWORDS.has(w)); }
+function wordEq(a, b){ return a === b || similar(a, b); }
+function approxMatches(guessRaw, targetRaw){
+  if(answerMatches(guessRaw, targetRaw)) return true;
+  const g = [...new Set(keyWords(guessRaw))];
+  if(!g.length) return false;
+  const raw = String(targetRaw || '');
+  const afterColon = raw.includes(':') ? raw.slice(raw.indexOf(':') + 1) : ''; // "Shakira: Bzrp Music Sessions…"
+  const titles = [cleanTitle(raw), raw, cleanTitle(afterColon)].map(keyWords).filter(t => t.length);
+  return titles.some(t => {
+    if(g.some(x => /^\d+$/.test(x) && !t.includes(x))) return false; // "vol 52" no acierta "Vol. 53"
+    const hitTitle = t.filter(w => g.some(x => wordEq(x, w))).length; // palabras del título que acertó
+    const hitGuess = g.filter(x => t.some(w => wordEq(x, w))).length; // palabras suyas que sí están en el título
+    return hitTitle >= Math.max(1, Math.ceil(t.length * 0.4)) && hitGuess / g.length >= 0.5;
+  });
+}
+
 function isCorrectGuess(guess, track, mode){
+  if(mode === 'approx') return approxMatches(guess, track.name);
   if(answerMatches(guess, track.name)) return true;
   if(mode === 'title-artist') return (track.artists || []).some(a => answerMatches(guess, a));
   return false;
@@ -943,7 +969,7 @@ $('load-playlist-btn').addEventListener('click', async () => {
 
   const requested = Math.min(MAX_SONGS, Math.max(1, parseInt($('num-songs').value, 10) || 12));
   const settings = {
-    validationMode: $('validation-mode').value === 'title-artist' ? 'title-artist' : 'title',
+    validationMode: ['title', 'approx', 'title-artist'].includes($('validation-mode').value) ? $('validation-mode').value : 'title',
     playWithTimer: $('timer-mode').value === 'with-timer',
     maxAttempts: MAX_ATTEMPTS,
     stealSeconds: STEAL_SECONDS
@@ -1346,7 +1372,8 @@ function renderGame(){
   const canGuess = (phase === 'main' && amTurnHolder && !!roomState.maxTier) || (phase === 'steal' && !amTurnHolder);
   $('guess-input').disabled = !canGuess; // no se desactiva mientras se envía, así el teclado no se cierra
   $('guess-btn').disabled = !canGuess || busy;
-  const what = roomSettings.validationMode === 'title-artist' ? 'la canción o el artista' : 'la canción';
+  const mode = roomSettings.validationMode;
+  const what = mode === 'title-artist' ? 'la canción o el artista' : mode === 'approx' ? 'la canción (basta con parecido)' : 'la canción';
   $('guess-input').placeholder = canGuess ? `Escribe ${what}…`
     : (phase === 'main' && amTurnHolder) ? 'Primero escucha un fragmento' : 'Espera tu turno…';
   $('guess-label').textContent = 'Tu respuesta: ' + what;

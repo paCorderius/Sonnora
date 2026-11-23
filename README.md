@@ -5,7 +5,7 @@ Juego para adivinar canciones de una playlist de Spotify escuchando fragmentos d
 ## Cómo se juega
 
 1. **El anfitrión crea la sala.** Toca *Crear sala*, conecta su cuenta de Spotify, pega el link de una playlist suya y elige:
-   - **Qué cuenta como respuesta:** solo el nombre de la canción, o el nombre de la canción o del artista.
+   - **Qué cuenta como respuesta:** solo el nombre de la canción, el nombre aproximado de la canción, o el nombre de la canción o del artista.
    - **Temporizador:** 45 s por ronda más 10 s para robar, o sin límite de tiempo (sin robo).
    - **Número de canciones:** hasta 60. Lo ideal es un múltiplo del número de jugadores.
 2. **Los demás se unen.** Tocan *Unirme con código*, escriben el código, eligen color y nombre. El orden en que entran es el orden de turnos.
@@ -25,9 +25,16 @@ La interfaz toma el color del jugador en turno (barra de turno y botones de frag
 - No importan mayúsculas, acentos ni signos de puntuación.
 - Se ignoran agregados del título como "(feat. …)", "[Live]" o "- Remastered 2011".
 - Se aceptan errores de dedo pequeños (más o menos uno cada 5 letras).
-- Se puede escribir de más, siempre que vaya el título completo ("bohemian rhapsody de queen").
-- Una palabra suelta del título **no** cuenta ("rhapsody" no acierta "Bohemian Rhapsody").
+- Se puede escribir de más (hasta 3 palabras extra), siempre que vaya el título completo ("bohemian rhapsody de queen").
 - Funciona con títulos en cualquier alfabeto (japonés, coreano, cirílico, etc.).
+
+Según el modo que elija el anfitrión:
+
+- **Solo el nombre de la canción:** hay que escribir el título completo. Una palabra suelta no cuenta ("rhapsody" no acierta "Bohemian Rhapsody").
+- **Nombre aproximado de la canción:** basta con acertar al menos el 40 % de las palabras importantes del título (no cuentan "el", "the", "de", "vol", "remix"…), y al menos la mitad de lo que escribas tiene que estar en el título. Si escribes un número, tiene que coincidir. Ejemplos con "Shakira: Bzrp Music Sessions, Vol. 53":
+  - "bzrp 53", "music sessions 53" o "bizarrap music session 53" sí aciertan.
+  - "bzrp", "shakira" o "music sessions 52" no aciertan.
+- **Nombre de la canción o del artista:** como el primero, pero también vale el nombre de cualquiera de los artistas.
 
 ## Requisitos
 

@@ -1,0 +1,11 @@
+# Nunca subir llaves de firma
+*.jks
+*.keystore
+*.jks.base64.txt
+firma-android/
+
+# Compilación de Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties

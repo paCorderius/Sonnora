@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sonnora</string>
+    <!-- Debe coincidir exactamente con la Redirect URI registrada en Spotify -->
+    <string name="launch_url" translatable="false">https://pacorderius.github.io/Sonnora/index.html</string>
+    <string name="provider_authority" translatable="false">io.github.pacorderius.sonnora.fileprovider</string>
+    <string name="asset_statements" translatable="false">
+        [{
+            \"relation\": [\"delegate_permission/common.handle_all_urls\"],
+            \"target\": {\"namespace\": \"web\", \"site\": \"https://pacorderius.github.io\"}
+        }]
+    </string>
+</resources>

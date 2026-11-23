@@ -1,0 +1,55 @@
+plugins {
+    id 'com.android.application'
+}
+
+// La llave de firma llega desde los secretos de GitHub (ver android/README.md).
+// Sin ella se firma con una llave temporal: el APK instala igual, pero las
+// actualizaciones pedirán desinstalar la versión anterior.
+def keystorePath = System.getenv("SONNORA_KEYSTORE_PATH")
+def keystorePassword = System.getenv("SONNORA_KEYSTORE_PASSWORD")
+def hasReleaseKey = keystorePath && keystorePassword && file(keystorePath).exists()
+
+android {
+    namespace 'io.github.pacorderius.sonnora'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'io.github.pacorderius.sonnora'
+        minSdk 21
+        targetSdk 34
+        versionCode((System.getenv("GITHUB_RUN_NUMBER") ?: "1") as Integer)
+        versionName "1.0." + (System.getenv("GITHUB_RUN_NUMBER") ?: "0")
+    }
+
+    signingConfigs {
+        release {
+            if (hasReleaseKey) {
+                storeFile file(keystorePath)
+                storePassword keystorePassword
+                keyAlias 'sonnora'
+                keyPassword keystorePassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig hasReleaseKey ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+}
